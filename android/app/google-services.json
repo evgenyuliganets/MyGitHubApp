@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "487181271122",
+    "project_id": "mygithubapp-6a6e7",
+    "storage_bucket": "mygithubapp-6a6e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487181271122:android:6c6b49142ff7bbf7439f8b",
+        "android_client_info": {
+          "package_name": "evgenyuliganets.my_github_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "487181271122-hglm6n8d5d6l4lk1m0vvhghsu245uhhq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXtgEMvmIwbTJIU-Nzvy07DCRzWxvOcHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "487181271122-hglm6n8d5d6l4lk1m0vvhghsu245uhhq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
