@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'dart:async';
 
-
+import 'package:authentication_repository/authentication_repository.dart';
+import 'package:my_github_app/app.dart';
+import 'package:flutter/widgets.dart';
+import 'package:user_repository/user_repository.dart';
 void main() {
-  runApp(MyApp());
+  runApp(App(
+    authenticationRepository: AuthenticationRepository(),
+    userRepository: UserRepository(),
+  ));
 }
 class MyApp extends StatelessWidget {
   @override
@@ -33,24 +39,18 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController popupController = new TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  var sing="Signing In...";
   @override
   void initState() {
     super.initState();
   }
-  Future<void> main() async {
-    try{sing="Signing In...";
-    var github = GitHub(auth: Authentication.basic(usernameController.text, passwordController.text));
-
-    bool isSigned = await github.auth.isBasic;
-    if (isSigned==true){
-      Repository repo = await github.repositories.getRepository(RepositorySlug(github.auth.username, 'blog'));
-      showMessage(repo.language);
-    }
-    }on Exception catch(_){
+  Future<void> mainer() async {
+    try{
+    var github = GitHub(auth: Authentication.basic(usernameController.text,passwordController.text));
+    bool check= await github.users.isUser(usernameController.text);
+    showMessage(check.toString());
+    }on Error catch(_){
       return throw Error;
     }
-
   }
   void showError(dynamic ex) {
     showMessage(ex.toString());
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Flutter Login UI'),
+        title: Text('My GitHub App'),
         centerTitle: true,
       ),
       body: Center(
@@ -110,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         TextField(
                           controller: passwordController,
+                          obscureText:true,
                           decoration: InputDecoration(
                               icon: Icon(Icons.lock),
                               hintText: 'Enter your password',
@@ -121,19 +122,19 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: <Widget>[
                               Expanded(
                                 child: RaisedButton(
-                                  onPressed: () { _scaffoldKey.currentState.showSnackBar(
-                                      new SnackBar(duration: new Duration(seconds: 3), content:
+                                  onPressed: () { var my;
+                                    _scaffoldKey.currentState.showSnackBar(
+                                      new SnackBar(duration: new Duration(seconds: 3),key: my, content:
                                       new Row(
                                         children: <Widget>[
                                       new CircularProgressIndicator(),
-                                          new Text(sing)
+                                          new Text("Signing In...")
                                         ],
                                       ),
                                       ));
-                                      main()
-                                      .catchError((Error)=> showMessage("Wrong username or password"));
-                                      main()
-                                      .whenComplete(() => null);
+                                      mainer()
+                                      .catchError((_)=> showMessage(_.toString()))
+                                      .whenComplete(() => _scaffoldKey.currentState.removeCurrentSnackBar());
                                   },
                                   padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
                                   child: Text(
