@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:github/github.dart';
 import 'package:meta/meta.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated,error }

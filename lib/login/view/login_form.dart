@@ -35,9 +35,10 @@ class LoginForm extends StatelessWidget {
           children: [
             _LogoInput(),
             _UsernameInput(),
-            const Padding(padding: EdgeInsets.all(12)),
+            const Padding(padding: EdgeInsets.all(5)),
+            const Padding(padding: EdgeInsets.only(left: 20)),
             _PasswordInput(),
-            const Padding(padding: EdgeInsets.all(12)),
+            const Padding(padding: EdgeInsets.all(10)),
             _LoginButton(),
           ],
         ),
@@ -77,7 +78,7 @@ class _UsernameInput extends StatelessWidget {
           decoration: InputDecoration(
               focusColor: Color(0xffe8f0fe),
               fillColor: Color(0xffe1e4e8),
-              icon: Icon(Icons.person_pin),
+              icon: Icon(Icons.login),
               hintText: 'Enter your GitHub username',
               labelText: 'Username',
             errorText: state.username.invalid ? 'Invalid username' : null,
@@ -100,7 +101,7 @@ class _PasswordInput extends StatelessWidget {
               context.read<LoginBloc>().add(LoginPasswordChanged(password)),
           obscureText:true,
           decoration: InputDecoration(
-              icon: Icon(Icons.lock),
+              icon: Icon(Icons.lock_rounded),
               hintText: 'Enter your password',
               labelText: 'Password',
             errorText: state.password.invalid ? 'invalid password' : null,
