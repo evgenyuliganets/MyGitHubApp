@@ -70,7 +70,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } on Error catch (_) {
         yield state.copyWith(status: FormzStatus.submissionFailure);
         print(_.toString());
-        _authenticationRepository.dispose();
       }
     }
   }

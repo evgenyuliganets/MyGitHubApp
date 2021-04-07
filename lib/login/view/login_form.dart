@@ -36,7 +36,6 @@ class LoginForm extends StatelessWidget {
             _LogoInput(),
             _UsernameInput(),
             const Padding(padding: EdgeInsets.all(5)),
-            const Padding(padding: EdgeInsets.only(left: 20)),
             _PasswordInput(),
             const Padding(padding: EdgeInsets.all(10)),
             _LoginButton(),

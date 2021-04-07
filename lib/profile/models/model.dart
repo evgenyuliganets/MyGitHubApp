@@ -1,0 +1,1 @@
+export 'package:my_github_app/home/models/profile.dart';
