@@ -1,30 +1,33 @@
-import 'dart:convert';
 
+import 'package:github/github.dart';
+import 'package:my_github_app/database/users_repository.dart';
 import 'package:my_github_app/home/models/profile.dart';
-import 'package:http/http.dart';
-
 class DataRepository {
   Future<Profile> fetchUser(String userName) async {
-    String api = 'https://api.github.com/users/$userName';
-    return await get(api).then((data) {
-      final jsonData = json.decode(data.body);
-
-      if (jsonData['message'] == "Not Found") {
+    try{
+      final _userRepository = UsersRepository();
+    GitHub github= GitHub(auth: Authentication.basic(await _userRepository.getAllUser().then((value) =>
+        value.first.username.toString()), await _userRepository.getAllUser().then((value) =>
+        value.first.password.toString())));
+    User search= await SearchService(github).users(userName).first;
+      if (search ==null) {
         throw UserNotFoundException();
       } else {
+        var user =await github.users.getUser(search.login);
         final profile = Profile(
-          name: jsonData['login'],
-          bio: jsonData['bio'] ?? "",
-          followers: jsonData['followers'],
-          following: jsonData['following'],
-          image: jsonData['avatar_url'],
-          public_repos: jsonData['public_repos'],
+          name: search.login,
+          bio: user.bio,
+          followers: user.followersCount,
+          following: user.followingCount,
+          image: user.avatarUrl,
+          public_repos: user.publicReposCount,
         );
         return profile;
       }
-    }).catchError((context) {
+    }
+    catch (Error) {
       throw UserNotFoundException();
-    });
+    }
   }
 }
 

@@ -30,8 +30,8 @@ Column buildUserData(Profile profile) {
               fontWeight: FontWeight.bold,
             ),
           ),
-          if(profile.bio.isNotEmpty)
           SizedBox(height: 10),
+          if(profile.bio !=null)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -66,6 +66,7 @@ Column buildUserData(Profile profile) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                if(profile.followers !=null)
                 Column(
                   children: [
                     Text(
@@ -83,6 +84,7 @@ Column buildUserData(Profile profile) {
                     ),
                   ],
                 ),
+                if(profile.following !=null)
                 Column(
                   children: [
                     Text(
@@ -100,6 +102,7 @@ Column buildUserData(Profile profile) {
                     ),
                   ],
                 ),
+                if(profile.public_repos !=null)
                 Column(
                   children: [
                     Text(

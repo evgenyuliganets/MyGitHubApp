@@ -15,7 +15,7 @@ class _GitProfileState extends State<GitProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( title: const Text('Home'),backgroundColor: Colors.black54,
+      appBar: AppBar( title:toggle ? const Text('Profile'): Text('Home'),backgroundColor: Colors.black54,
         actions: <Widget>[IconButton(
             icon: toggle
                 ? Icon(Icons.login)

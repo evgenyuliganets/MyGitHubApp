@@ -1,12 +1,14 @@
 import 'dart:async';
-
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:github/github.dart';
+import 'package:my_github_app/database/model.dart';
+import 'package:my_github_app/database/users_repository.dart';
 import 'package:my_github_app/login/login.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
+
 part 'login_event.dart';
 part 'login_state.dart';
 
@@ -18,7 +20,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         super(const LoginState());
 
   final AuthenticationRepository _authenticationRepository;
-
   @override
   Stream<LoginState> mapEventToState(
       LoginEvent event,
@@ -31,7 +32,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield* _mapLoginSubmittedToState(event, state);
     }
   }
-
+  final _userRepository = UsersRepository();
   LoginState _mapUsernameChangedToState(
       LoginUsernameChanged event,
       LoginState state,
@@ -67,10 +68,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           isUser: await GitHub(auth: Authentication.basic(state.username.value,state.password.value)).users.isUser(state.username.value),
         );
         yield state.copyWith(status: FormzStatus.submissionSuccess);
+        _userRepository.deleteAllUsers();
+         _userRepository.insertUser(UserModel(id: 1,username: state.username.value,password: state.password.value));
       } on Error catch (_) {
         yield state.copyWith(status: FormzStatus.submissionFailure);
         print(_.toString());
       }
     }
   }
+
 }

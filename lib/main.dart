@@ -67,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     showDialog(context: context, builder: (BuildContext context) => alert);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
