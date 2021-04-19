@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_github_app/home/data_repository/data_repository.dart';
-import 'package:my_github_app/home/view/profile_short.dart';
+import 'package:my_github_app/home/view/profiles_short.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 
 
@@ -25,16 +25,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: BlocProvider(
         create: (context) => ProfileBloc(DataRepository()),
-        child: GitProfile(),
+        child: GitProfiles(),
       ),
-      /* RaisedButton(
-              child: const Text('Logout'),
-              onPressed: () {
-                context
-                    .read<AuthenticationBloc>()
-                    .add(AuthenticationLogoutRequested());
-              },
-            ),*/
+
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:my_github_app/home/home.dart';
 import 'package:my_github_app/login/login.dart';
 import 'package:my_github_app/splash/splash.dart';
 import 'package:user_repository/user_repository.dart';
-import 'database/users_repository.dart';
+import 'database/authentication/users_repository.dart';
 import 'home/data_repository/data_repository.dart';
 
 class App extends StatelessWidget {
@@ -53,7 +53,8 @@ class _AppViewState extends State<AppView> {
     return MaterialApp(
       navigatorKey: _navigatorKey,
       builder: (context, child) {
-        return  BlocListener<AuthenticationBloc, AuthenticationState>(
+        return
+          BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) async {
             try {
               await _authenticationRepository.logIn(isUser: true,

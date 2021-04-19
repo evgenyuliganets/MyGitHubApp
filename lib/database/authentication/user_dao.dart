@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:my_github_app/database/database.dart';
-import 'package:my_github_app/database/model.dart';
+import 'package:my_github_app/database/authentication/database.dart';
+import 'package:my_github_app/database/authentication/model.dart';
 
-class ProfileDao {
+class UserDao {
   final dbProvider = DatabaseProvider.dbProvider;
 
-  Future<int> createTodo(UserModel user) async {
+  Future<int> createUser(UserModel user) async {
     final db = await dbProvider.database;
     var result = db.insert(userTABLE, user.toDatabaseJson());
     return result;
@@ -44,7 +44,6 @@ class ProfileDao {
     return result;
   }
 
-  //We are not going to use this in the demo
   Future deleteAllUsers() async {
     final db = await dbProvider.database;
     var result = await db.delete(

@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 import 'package:my_github_app/repository/bloc/repository_bloc.dart';
 import 'package:my_github_app/repository/data_repository/data_repository.dart';
-import 'package:my_github_app/repository/view/repositorys_search.dart';
 
-class HomeTextField extends StatelessWidget {
+class RepoTextField extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
 
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class HomeTextField extends StatelessWidget {
                 decoration: InputDecoration(
                   suffixIcon: Icon(Icons.search),
                   border: InputBorder.none,
-                  hintText: 'Search User Here',
+                  hintText: 'Search Repository Here',
                   contentPadding: EdgeInsets.all(12),
                 ),
               ),
@@ -36,30 +35,14 @@ class HomeTextField extends StatelessWidget {
         ),
       ],
       ),
-       Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children:[
-            Padding(padding: const EdgeInsets.all(0),
-                child: OutlineButton( onPressed:() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BlocProvider(
-                      create: (context) => RepositoryBloc(RepoDataRepository()),
-                      child:GitReposSearch(),
-                    ),),);
-                  },
-                  child: Text('Search Repositories'),
-                )
-            )
-          ]),
     ]);
   }
 
-  void submitUserName(BuildContext context, String userName) {
-    final profileBloc = context.read<ProfileBloc>();
-    profileBloc.add(GetUsers(userName));
+  void submitUserName(BuildContext context, String repoName) {
+    final repoBloc = context.read<RepositoryBloc>();
+    repoBloc.add(GetRepos(repoName));
     void dispose() {
-      profileBloc.close();
+      repoBloc.close();
     }
   }
 

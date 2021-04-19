@@ -1,16 +1,18 @@
 class Profile {
   final String name;
+  final String login;
   final int followers;
   final int following;
-  final int public_repos;
+  final int publicRepos;
   final String bio;
   final String image;
 
   Profile({
     this.name,
+    this.login,
     this.followers,
     this.following,
-    this.public_repos,
+    this.publicRepos,
     this.bio,
     this.image,
   });

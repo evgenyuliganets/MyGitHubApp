@@ -4,9 +4,8 @@ part of 'profile_bloc.dart';
 abstract class ProfileState {
   const ProfileState();
 }
-
-class ProfileInitial extends ProfileState {
-  const ProfileInitial();
+class ProfilesInitial extends ProfileState {
+  const ProfilesInitial();
 }
 
 class ProfileLoading extends ProfileState {
@@ -21,4 +20,19 @@ class ProfileLoaded extends ProfileState {
 class ProfileError extends ProfileState {
   final String error;
   const ProfileError(this.error);
+}
+
+
+class ProfilesLoading extends ProfileState {
+  const ProfilesLoading();
+}
+
+class ProfilesError extends ProfileState {
+  final String error;
+  const ProfilesError(this.error);
+}
+
+class ProfilesLoaded extends ProfileState {
+  final List<Profile> profile;
+  const ProfilesLoaded(this.profile);
 }

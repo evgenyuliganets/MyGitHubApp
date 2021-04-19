@@ -6,66 +6,61 @@ import 'package:my_github_app/home/data_repository/data_repository.dart';
 import 'package:my_github_app/home/models/profile.dart';
 import 'package:my_github_app/home/view/profile_full.dart';
 import 'package:my_github_app/home/view/text_field.dart';
+import 'package:my_github_app/repository/models/model.dart';
+import 'package:my_github_app/repository/view/repos_text_field.dart';
 
 
-ListView buildUserData(List<Profile> profile) {
+ListView buildReposData(List<Repository> repos) {
   return ListView.builder(//ListView
     shrinkWrap: true,
-    itemCount: profile.length,
+    itemCount: repos.length,
     itemBuilder: (BuildContext context, int index) {
       if(index==0){ // FirstElement
    return GestureDetector(
-     onTap:() {
+     onTap:() {/*
        Navigator.push(
          context,
          MaterialPageRoute(builder: (context) => BlocProvider(
            create: (context) => ProfileBloc(DataRepository()),
            child:GitProfile(profile[index].login),
          ),),);
-     },
+     */},
      child: Column(
       children: [
       Column(
         children: [
-          HomeTextField(),//Search
-          Container(
-            width: 150,
-            height: 150,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image(
-                image: NetworkImage(profile.first.image),
-                fit: BoxFit.cover,
-              ),//Icon
-            ),
-          ),
-          if(profile.first.name !=null)
-          SizedBox(height: 5),
-          if(profile.first.name !=null)
+          RepoTextField(),//Search
+          if(repos.first.name !=null)
+            SizedBox(height: 5),
+          Row(children: [
+          if(repos.first.name !=null)
           Text(
-            profile.first.name,
+            repos.first.name,
             style: TextStyle(
               color: Color(0xff212121),
               fontSize: 25,
               fontWeight: FontWeight.bold,
             ),
           ),
+          if(repos.first.owner !=null)
             SizedBox(height: 5),
+          if(repos.first.owner !=null)
             Text(
-              profile.first.login,
+              repos.first.owner,
               style: TextStyle(
                 color: Color(0xff3e3e3e),
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),
-          if(profile.first.bio !=null)
+          ]),
+          if(repos.first.description !=null)
           SizedBox(height: 10),
-          if(profile.first.bio !=null)
+          if(repos.first.description !=null)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child:  Text(
-              profile.first.bio,
+              repos.first.description,
               style: TextStyle(
                 color: Color(0xff2d2d2d),
                 fontSize: 18,
@@ -96,54 +91,37 @@ ListView buildUserData(List<Profile> profile) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                if(profile.first.followers !=null)
+                if(repos.first.updatedAt !=null)
                 Column(
                   children: [
                     Text(
-                      profile.first.followers.toString(),
+                      repos.first.createdAt.toString(),
                       style: TextStyle(
                         color: Color(0xff3e3e3e),
-                        fontSize: 30,
+                        fontSize: 20,
                       ),
                     ),
                     Text(
-                      "Followers",
+                      "Updated at",
                       style: TextStyle(
                         fontSize: 15,
                       ),
                     ),
                   ],
                 ),
-                if(profile.first.following !=null)
+
+                if(repos.first.language !=null)
                 Column(
                   children: [
                     Text(
-                      profile.first.following.toString(),
-                      style: TextStyle(
-                        color: Color(0xff404040),
-                        fontSize: 30,
-                      ),
-                    ),
-                    Text(
-                      "Following",
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                ),
-                if(profile.first.publicRepos !=null)
-                Column(
-                  children: [
-                    Text(
-                      profile.first.publicRepos.toString(),
+                      repos.first.language.toString(),
                       style: TextStyle(
                         color: Color(0xff454545),
                         fontSize: 30,
                       ),
                     ),
                     Text(
-                      "Repositories",
+                      "Language",
                       style: TextStyle(
                         fontSize: 15,
                       ),
@@ -161,27 +139,21 @@ ListView buildUserData(List<Profile> profile) {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              leading: Image(image: NetworkImage(profile[index].image),),
-              title: Row(children: [(profile[index].name==null? Container() :Text(profile[index].name)),
-                (profile[index].login==null
+              title: Row(children: [(repos[index].name==null? Container() :Text(repos[index].name)),
+                (repos[index].owner==null
                     ?Container()
-                    :RichText(text:TextSpan(text:'  ${profile[index].login}',style: TextStyle(color:profile[index].name==null
+                    :RichText(text:TextSpan(text:'  ${repos[index].owner}',style: TextStyle(color:repos[index].name==null
                     ? Color(0xff212121)
                     :Color(0xff474747)),)))]),
-              subtitle:profile[index].bio==null? Container(padding: EdgeInsets.all(0),) : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
-                  0xff5a5a5a)),text:profile[index].bio)),
+              subtitle:repos[index].description==null? Container(padding: EdgeInsets.all(0),) : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
+                  0xff5a5a5a)),text:repos[index].description)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 TextButton(
                   child: const Text('Open Profile'),
-                  onPressed: () {Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BlocProvider(
-                        create: (context) => ProfileBloc(DataRepository()),
-                        child:GitProfile(profile[index].login),
-                    ),),);},
+                  onPressed: () {},
                 ),
                 const SizedBox(width: 8),
               ],

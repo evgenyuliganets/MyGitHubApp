@@ -10,21 +10,34 @@ part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final DataRepository _profileRepo;
-  ProfileBloc(this._profileRepo) : super(ProfileInitial());
+  ProfileBloc(this._profileRepo) : super(ProfilesInitial());
 
   @override
   Stream<ProfileState> mapEventToState(
     ProfileEvent event,
   ) async* {
     // TODO: implement mapEventToState
-    try {
       if (event is GetUser) {
-        yield (ProfileLoading());
-        final profile = await _profileRepo.fetchUser(event.userName);
-        yield (ProfileLoaded(profile));
+        try {
+          yield (ProfileLoading());
+          final profile = await _profileRepo.fetchUser(event.userName);
+          yield (ProfileLoaded(profile));
+        }  on UserNotFoundException {
+        yield (ProfileError('This User was Not Found!'));
+        } on TimeoutException {
+        yield (ProfileError("You have reached limit of query's! Wait at least a minute to continue."));}
       }
-    } on UserNotFoundException {
-      yield (ProfileError('This User was Not Found!'));
-    }
+      else if (event is GetUsers) {
+        try {
+          yield (ProfilesLoading());
+          final profile = await _profileRepo.fetchUsers(event.userName);
+          yield (ProfilesLoaded(profile));
+        }on UserNotFoundException {
+          yield (ProfilesError('This User was Not Found!'));
+        } on TimeoutException {
+          yield (ProfilesError("You have reached limit of query's! Wait at least a minute to continue."));}
+      }
+
   }
 }
+
