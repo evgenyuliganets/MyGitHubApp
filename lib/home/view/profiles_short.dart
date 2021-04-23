@@ -18,8 +18,9 @@ class _GitProfilesState extends State<GitProfiles> {
   String user;
   @override
   Widget build(BuildContext context) {
+    waitDatabase();
     return Scaffold(
-      appBar: AppBar( title:Text('Home'),backgroundColor: Colors.black54,
+      appBar: AppBar( title:Text('Home'),backgroundColor: Color(0xff282828),
         actions: <Widget>[IconButton(
             icon: Icon(
               CupertinoIcons.person_crop_circle,
@@ -28,7 +29,7 @@ class _GitProfilesState extends State<GitProfiles> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                 return projectWidget();
+                 return fullProfile();
                 }),);
             }
             ),],),
@@ -38,7 +39,7 @@ class _GitProfilesState extends State<GitProfiles> {
             child: BlocConsumer<ProfileBloc, ProfileState>(
               builder: (context, state) {
                 if (state is ProfilesInitial)
-                  return buildInitialTextField();
+                  return buildInitialStart();
                 else if (state is ProfilesLoading)
                   return buildLoadingState();
                 else if (state is ProfilesLoaded)
@@ -64,15 +65,36 @@ class _GitProfilesState extends State<GitProfiles> {
       child: HomeTextField(),
     );
   }
-
-  Widget projectWidget() {
+  Widget buildInitialStart() {
+    return Center(
+      child: Column(
+      children:[
+        HomeTextField(),
+        Container(height: 30,),
+      Column(children:[
+          Image(image:
+          AssetImage('assets/logo.png'),
+            color: Color(0xff878787),
+            width: 150,
+            height: 150,),
+          Container(height: 10,),
+          Text('Search your first user.',style: TextStyle(color: Color(0xff616161),fontSize: 20),)
+        ])
+      ],
+      ),);
+  }
+  Widget waitDatabase() {
     return FutureBuilder(builder:(context,projectSnap) {
+      return buildLoadingState();
+    },
+        future: getUserFromDataBase(_userRepository));
+  }
+
+  Widget fullProfile() {
        return  BlocProvider(
             create: (context) => ProfileBloc(DataRepository()),
             child:GitProfile(user),);
 
-    },
-    future: getUserFromDataBase(_userRepository));
   }
 
   Widget buildLoadingState() {

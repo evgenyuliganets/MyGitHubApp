@@ -14,8 +14,9 @@ class RepoDataRepository {
       } else {
         Repository repository =await github.repositories.getRepository(RepositorySlug(owner,name));
         final repo = my.Repository(
-          description: repository.name,
-          createdAt: repository.createdAt.toIso8601String(),
+          name: repository.name,
+          description: repository.description,
+          createdAt: repository.createdAt.toIso8601String().substring(0,20),
           updatedAt: repository.updatedAt.toIso8601String(),
           language: repository.language,
           owner: repository.owner.login,
@@ -38,11 +39,18 @@ class RepoDataRepository {
       if (github ==null) {
         throw RepoNotFoundException();
       } else {
-        List<Repository> userRepos = await github.repositories.listUserRepositories(userName).toList();var j=0;
+        List<Repository> userRepos = await github.repositories.listUserRepositories(userName,sort: 'created').toList();
+        if(userRepos.length>7){
+          List<Repository> lists = new List<Repository>(7);
+          lists= userRepos.getRange(userRepos.length-7, userRepos.length).toList();
+          userRepos.clear();
+          userRepos=[...lists];
+        }
+        var j=0;
         List<my.Repository> main(List<Repository>users) {List<my.Repository>list= new List<my.Repository>(userRepos.length);
         list.forEach((element) {list[j]=my.Repository(
           name: userRepos[j].name,
-          description: userRepos[j].name,
+          description: userRepos[j].description,
           createdAt: userRepos[j].createdAt.toIso8601String(),
           updatedAt: userRepos[j].updatedAt.toIso8601String(),
           language: userRepos[j].language,
@@ -73,11 +81,12 @@ class RepoDataRepository {
       } else {
         var j=0;
         List<my.Repository> main(List<Repository>users) {List<my.Repository>list= new List<my.Repository>(users.length);
-        list.forEach((element) {list[j]=my.Repository(
+        list.forEach((element) {
+          list[j]=my.Repository(
           name: userRepos[j].name,
-          description: userRepos[j].name,
-          createdAt: userRepos[j].createdAt.toIso8601String(),
-          updatedAt: userRepos[j].updatedAt.toIso8601String(),
+          description: userRepos[j].description,
+          createdAt: userRepos[j].createdAt.toIso8601String().substring(1,19),
+          updatedAt: userRepos[j].updatedAt.toIso8601String().substring(1,19),
           language: userRepos[j].language,
           owner: userRepos[j].owner.login,
           defaultBranch: userRepos[j].defaultBranch,
@@ -92,6 +101,4 @@ class RepoDataRepository {
     }
   }
 }
-
-
 class RepoNotFoundException implements Exception {}

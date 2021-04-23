@@ -6,8 +6,11 @@ import 'package:my_github_app/home/data_repository/data_repository.dart';
 import 'package:my_github_app/home/models/profile.dart';
 import 'package:my_github_app/home/view/profile_full.dart';
 import 'package:my_github_app/home/view/text_field.dart';
+import 'package:my_github_app/repository/bloc/repository_bloc.dart';
+import 'package:my_github_app/repository/data_repository/data_repository.dart';
 import 'package:my_github_app/repository/models/model.dart';
 import 'package:my_github_app/repository/view/repos_text_field.dart';
+import 'package:my_github_app/repository/view/single_repository.dart';
 
 
 ListView buildReposData(List<Repository> repos) {
@@ -17,22 +20,21 @@ ListView buildReposData(List<Repository> repos) {
     itemBuilder: (BuildContext context, int index) {
       if(index==0){ // FirstElement
    return GestureDetector(
-     onTap:() {/*
+     onTap:() {
        Navigator.push(
          context,
          MaterialPageRoute(builder: (context) => BlocProvider(
-           create: (context) => ProfileBloc(DataRepository()),
-           child:GitProfile(profile[index].login),
+           create: (context) => RepositoryBloc(RepoDataRepository()),
+           child:SingleRepo(repos[index].owner,repos[index].name),
          ),),);
-     */},
+     },
      child: Column(
       children: [
+        Column(children:[RepoTextField(),]),//Search
       Column(
         children: [
-          RepoTextField(),//Search
           if(repos.first.name !=null)
             SizedBox(height: 5),
-          Row(children: [
           if(repos.first.name !=null)
           Text(
             repos.first.name,
@@ -46,21 +48,20 @@ ListView buildReposData(List<Repository> repos) {
             SizedBox(height: 5),
           if(repos.first.owner !=null)
             Text(
-              repos.first.owner,
+              'Owner: '+repos.first.owner,
               style: TextStyle(
                 color: Color(0xff3e3e3e),
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ]),
           if(repos.first.description !=null)
           SizedBox(height: 10),
           if(repos.first.description !=null)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child:  Text(
-              repos.first.description,
+              'Description: '+repos.first.description,
               style: TextStyle(
                 color: Color(0xff2d2d2d),
                 fontSize: 18,
@@ -91,7 +92,7 @@ ListView buildReposData(List<Repository> repos) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                if(repos.first.updatedAt !=null)
+                if(repos.first.createdAt !=null)
                 Column(
                   children: [
                     Text(
@@ -139,21 +140,35 @@ ListView buildReposData(List<Repository> repos) {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              title: Row(children: [(repos[index].name==null? Container() :Text(repos[index].name)),
+              leading:repos[index].name==null? Container() : Text(
+                repos[index].language.toString(),
+                style: TextStyle(
+                  color: Color(0xff454545),
+                  fontSize: 20,
+                ),
+              ),
+              title: Center(child:Column(crossAxisAlignment: CrossAxisAlignment.start, children: [(repos[index].name==null? Container() :Text(repos[index].name)),
                 (repos[index].owner==null
                     ?Container()
-                    :RichText(text:TextSpan(text:'  ${repos[index].owner}',style: TextStyle(color:repos[index].name==null
+                    :RichText(text:TextSpan(text:'Owner:  ${repos[index].owner}',style: TextStyle(color:repos[index].name==null
                     ? Color(0xff212121)
-                    :Color(0xff474747)),)))]),
-              subtitle:repos[index].description==null? Container(padding: EdgeInsets.all(0),) : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
-                  0xff5a5a5a)),text:repos[index].description)),
+                    :Color(0xff474747)),)))]),),
+              subtitle:Center(child:repos[index].description==null? Container(padding: EdgeInsets.all(0),) : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
+                  0xff5a5a5a)),text:'Description: '+repos[index].description)),),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 TextButton(
-                  child: const Text('Open Profile'),
-                  onPressed: () {},
+                  child: const Text('Open Repository'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BlocProvider(
+                        create: (context) => RepositoryBloc(RepoDataRepository()),
+                        child:SingleRepo(repos[index].owner,repos[index].name),
+                      ),),);
+                  },
                 ),
                 const SizedBox(width: 8),
               ],

@@ -6,29 +6,25 @@ import 'package:my_github_app/database/authentication/users_repository.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 import 'package:my_github_app/home/models/profile.dart';
 import 'package:my_github_app/home/view/build_full_user_data.dart';
+import 'package:my_github_app/home/view/build_short_single_user.dart';
 import 'package:my_github_app/login/view/login_page.dart';
 import 'package:my_github_app/repository/bloc/repository_bloc.dart';
 import 'package:my_github_app/repository/data_repository/data_repository.dart';
 import 'package:my_github_app/repository/view/user_repos.dart';
 
 // ignore: must_be_immutable
-class GitProfile extends StatefulWidget {
-  String userMain;
-  GitProfile(String userMain){
-    this.userMain=userMain;
+class GitProfileShort extends StatefulWidget {
+  String user;
+  GitProfileShort(String user){
+    this.user=user;
   }
   @override
-  _GitProfileState createState() => _GitProfileState();
+  _GitProfileShortState createState() => _GitProfileShortState();
 }
-final _userRepository = UsersRepository();
-class _GitProfileState extends State<GitProfile> {
-  String user;
+class _GitProfileShortState extends State<GitProfileShort> {
   @override
   Widget build(BuildContext context) {
-    waitDatabase();
     return Scaffold(
-      appBar: AppBar( title:Text('Profile'),backgroundColor: Colors.black54,
-        ),
       body: SingleChildScrollView(child: Container(
         child: BlocConsumer<ProfileBloc, ProfileState>(
           builder: (context, state) {
@@ -57,38 +53,13 @@ class _GitProfileState extends State<GitProfile> {
     ));
   }
   Widget initialProfile() {
-      submitUserName(context, widget.userMain);
+      submitUserName(context, widget.user);
       return buildLoadingState();
     }
-  Widget waitDatabase() {
-    return FutureBuilder(builder:(context,projectSnap) {
-      return buildLoadingState();
-    },
-        future: getUserFromDataBase(_userRepository));
-  }
-  Widget userRepos() {
-    return FutureBuilder(builder:(context,projectSnap) {
-      return  BlocProvider(
-        create: (context) => RepositoryBloc(RepoDataRepository()),
-        child:GitUserRepos(user),);
-
-    },
-        future: getUserFromDataBase(_userRepository));
-  }
   Widget buildUser(Profile profile) {
     return Column(
       children: [
-        buildUserFullData(profile),
-        Column(children:[
-          Text(
-              'Repositories:',
-              style: TextStyle(
-                color: Color(0xff454545),
-                fontSize: 20,)
-          ),
-        Container(height: 400 ,child: userRepos(),),]),
-        if(user==widget.userMain)
-        buildLogout(),
+        buildSingleUserData(profile),
       ],
     );
   }
@@ -102,26 +73,9 @@ class _GitProfileState extends State<GitProfile> {
       child: Column(children:[
         Icon(CupertinoIcons.person,size: 200,color:Color(0xff6f6f6f),),
         Text('Sorry, User has not been found!'),
-        if(user==widget.userMain)
-        buildLogout(),
       ],)
     );
   }
-  Widget buildLogout(){
-   return  RaisedButton(
-      child: const Text('Logout'),
-      onPressed: () {
-        context
-            .read<AuthenticationBloc>()
-            .add(AuthenticationLogoutRequested());
-        _userRepository.deleteAllUsers();
-        Navigator.pushAndRemoveUntil<void>(context,
-          LoginPage.route(),
-              (route) => false,
-        );
-      },
-    );
-}
   void submitUserName(BuildContext context, String userName) {
     final profileBloc = context.read<ProfileBloc>();
     profileBloc.add(GetUser(userName));
@@ -129,7 +83,5 @@ class _GitProfileState extends State<GitProfile> {
       profileBloc.close();
     }
   }
-  Future getUserFromDataBase (UsersRepository usersRepository) async {
-    user = await usersRepository.getAllUser().then((value) =>value.first.username.toString());
-  }
+
 }

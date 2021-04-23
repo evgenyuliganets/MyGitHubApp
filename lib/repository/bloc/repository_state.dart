@@ -22,8 +22,6 @@ class RepositoryError extends RepositoryState {
   final String error;
   const RepositoryError(this.error);
 }
-
-
 class RepositoriesLoading extends RepositoryState {
   const RepositoriesLoading();
 }
@@ -36,4 +34,18 @@ class RepositoriesError extends RepositoryState {
 class RepositoriesLoaded extends RepositoryState {
   final List<Repository> repository;
   const RepositoriesLoaded(this.repository);
+}
+
+class UserRepositoriesLoading extends RepositoryState {
+  const UserRepositoriesLoading();
+}
+
+class UserRepositoriesError extends RepositoryState {
+  final String error;
+  const UserRepositoriesError(this.error);
+}
+
+class UserRepositoriesLoaded extends RepositoryState {
+  final List<Repository> repository;
+  const UserRepositoriesLoaded(this.repository);
 }

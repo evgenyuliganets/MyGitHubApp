@@ -13,7 +13,7 @@ class RepoTextField extends StatelessWidget {
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(0),
+            padding: const EdgeInsets.all(5),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -21,7 +21,7 @@ class RepoTextField extends StatelessWidget {
               ),
               child: TextField(
                 onSubmitted: (value) =>
-                    submitUserName(context, _controller.text),
+                    submitRepoName(context, _controller.text),
                 controller: _controller,
                 decoration: InputDecoration(
                   suffixIcon: Icon(Icons.search),
@@ -38,7 +38,7 @@ class RepoTextField extends StatelessWidget {
     ]);
   }
 
-  void submitUserName(BuildContext context, String repoName) {
+  void submitRepoName(BuildContext context, String repoName) {
     final repoBloc = context.read<RepositoryBloc>();
     repoBloc.add(GetRepos(repoName));
     void dispose() {

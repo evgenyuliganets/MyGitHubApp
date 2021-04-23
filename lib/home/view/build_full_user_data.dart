@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_github_app/home/models/profile.dart';
-import 'package:my_github_app/home/view/profile_full.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 Column buildUserFullData(Profile profile) {
@@ -8,6 +9,7 @@ Column buildUserFullData(Profile profile) {
             children: [
               Column(
                 children: [
+                  if(profile.image !=null)
                   Container(
                     width: 150,
                     height: 150,
@@ -53,6 +55,15 @@ Column buildUserFullData(Profile profile) {
                         textAlign: TextAlign.center,
                       ),
                     ),
+                  if(profile.login !=null)
+                    SizedBox(height: 10),
+                  if(profile.login !=null)
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children:[
+                      Icon(CupertinoIcons.link),
+                    InkWell(
+                        child: new Text('Open in Browser',style: TextStyle(fontSize: 20,color: Colors.blue),),
+                        onTap: () => _launchURL('https://github.com/'+profile.login)
+                    ),])
                 ],
               ),
               Padding(
@@ -138,3 +149,10 @@ Column buildUserFullData(Profile profile) {
               ),
             ]);
       }
+_launchURL(url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}

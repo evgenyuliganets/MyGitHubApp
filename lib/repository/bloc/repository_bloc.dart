@@ -20,7 +20,7 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
     if (event is GetRepo) {
       try {
         yield (RepositoryLoading());
-        final repo = await _profileRepo.fetchRepo(event.userName,event.repoName);
+        final repo = await _profileRepo.fetchRepo(event.repoName,event.userName);
         yield (RepositoryLoaded(repo));
       }  on RepoNotFoundException {
         yield (RepositoryError('This Repo was Not Found!'));
@@ -39,13 +39,13 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
     }
     else if (event is GetUserRepos) {
       try {
-        yield (RepositoriesLoading());
+        yield (UserRepositoriesLoading());
         final repos = await _profileRepo.fetchUserRepos(event.userName);
-        yield (RepositoriesLoaded(repos));
+        yield (UserRepositoriesLoaded(repos));
       }on RepoNotFoundException {
-        yield (RepositoriesError('This Repos were Not Found!'));
+        yield (UserRepositoriesError('This User Repos were Not Found!'));
       } on TimeoutException {
-        yield (RepositoriesError("You have reached limit of query's! Wait at least a minute to continue."));}
+        yield (UserRepositoriesError("You have reached limit of query's! Wait at least a minute to continue."));}
     }
   }
 }

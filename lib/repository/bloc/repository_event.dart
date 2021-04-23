@@ -3,9 +3,9 @@ part of 'repository_bloc.dart';
 @immutable
 abstract class RepositoryEvent {}
 class GetRepo extends RepositoryEvent {
-  final String userName;
   final String repoName;
-  GetRepo(this.userName, this.repoName);
+  final String userName;
+  GetRepo(this.repoName, this.userName);
 }
 class GetRepos extends RepositoryEvent {
   final String repoName;

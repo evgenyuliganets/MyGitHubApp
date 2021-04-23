@@ -40,8 +40,8 @@ class _GitReposSearchState extends State<GitReposSearch> {
         child: BlocConsumer<RepositoryBloc, RepositoryState>(
           builder: (context, state) {
             if (state is RepositoryInitial)
-              return buildInitialTextField();
-            else if (state is RepositoriesLoading)
+              return buildInitialStart();
+            else if (state is UserRepositoriesLoading)
               return buildLoadingState();
             else if (state is RepositoriesLoaded)
               return buildReposData(state.repository);
@@ -65,6 +65,24 @@ class _GitReposSearchState extends State<GitReposSearch> {
     return Center(
       child: RepoTextField(),
     );
+  }
+  Widget buildInitialStart() {
+    return Center(
+      child: Column(
+        children:[
+          buildInitialTextField(),
+          Container(height: 30,),
+          Column(children:[
+            Image(image:
+            AssetImage('assets/logo.png'),
+              color: Color(0xff878787),
+              width: 150,
+              height: 150,),
+            Container(height: 10,),
+            Text('Search your first repository.',style: TextStyle(color: Color(0xff616161),fontSize: 20),)
+          ])
+        ],
+      ),);
   }
 
   Widget projectWidget() {
