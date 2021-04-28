@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_github_app/authentication/bloc/authentication_bloc.dart';
 import 'package:my_github_app/database/authentication/users_repository.dart';
+import 'package:my_github_app/database/profile/profiles_repository.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 import 'package:my_github_app/home/models/profile.dart';
 import 'package:my_github_app/home/view/build_full_user_data.dart';
@@ -21,6 +22,7 @@ class GitProfile extends StatefulWidget {
   _GitProfileState createState() => _GitProfileState();
 }
 final _userRepository = UsersRepository();
+final _profileRepository = ProfilesRepository();
 class _GitProfileState extends State<GitProfile> {
   String user;
   @override
@@ -31,11 +33,10 @@ class _GitProfileState extends State<GitProfile> {
         ),
       body: SingleChildScrollView(child: Container(
         child: BlocConsumer<ProfileBloc, ProfileState>(
+          // ignore: missing_return
           builder: (context, state) {
             if (state is ProfilesInitial)
               return initialProfile();
-            else if (state is ProfileLoading)
-              return buildLoadingState();
             else if (state is ProfileLoading)
               return buildLoadingState();
             else if (state is ProfileLoaded)
@@ -44,18 +45,28 @@ class _GitProfileState extends State<GitProfile> {
               return buildErrorState();
           },
           listener: (context, state) {
-            if (state is ProfileError) {
+            if (state is  ProfileError) {
               Scaffold.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.error),
                 ),
               );
             }
+            if (state is  ProfileLoaded) {
+              if (state.message!= null){
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                ),
+              );}
+            }
           },
         ),
       ),
     ));
   }
+
+
   Widget initialProfile() {
       submitUserName(context, widget.userMain);
       return buildLoadingState();
@@ -68,15 +79,16 @@ class _GitProfileState extends State<GitProfile> {
   }
   Widget userRepos() {
     return FutureBuilder(builder:(context,projectSnap) {
-      return  BlocProvider(
+      return Container(constraints: BoxConstraints(
+        maxHeight: 500,),child: BlocProvider(
         create: (context) => RepositoryBloc(RepoDataRepository()),
-        child:GitUserRepos(user),);
+        child:GitUserRepos(widget.userMain),));
 
     },
         future: getUserFromDataBase(_userRepository));
   }
   Widget buildUser(Profile profile) {
-    return Column(
+    return  Column(
       children: [
         buildUserFullData(profile),
         Column(children:[
@@ -86,7 +98,9 @@ class _GitProfileState extends State<GitProfile> {
                 color: Color(0xff454545),
                 fontSize: 20,)
           ),
-        Container(height: 400 ,child: userRepos(),),]),
+        Container(constraints: BoxConstraints(
+          maxHeight: 500,),
+          child: userRepos(),),]),
         if(user==widget.userMain)
         buildLogout(),
       ],
@@ -115,6 +129,7 @@ class _GitProfileState extends State<GitProfile> {
             .read<AuthenticationBloc>()
             .add(AuthenticationLogoutRequested());
         _userRepository.deleteAllUsers();
+        _profileRepository.deleteAllUsersProfile();
         Navigator.pushAndRemoveUntil<void>(context,
           LoginPage.route(),
               (route) => false,

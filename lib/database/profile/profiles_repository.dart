@@ -4,13 +4,17 @@ import 'package:my_github_app/database/profile/profiles_model.dart';
 class ProfilesRepository {
   final profileDao = ProfileDao();
 
-  Future<List<ProfileModel>> getAllUser({String  query}) => profileDao.getUsers(query: query);
+  Future<List<ProfileModel>> getAllUserProfile({String  query}) => profileDao.getUsersProfiles(query: query);
 
-  Future insertUser(ProfileModel user) => profileDao.createProfile(user);
+  Future insertUserProfile(ProfileModel profile) => profileDao.createProfile(profile);
 
-  Future updateUser(ProfileModel user) => profileDao.updateUser(user);
+  Future updateUserProfile(ProfileModel profile) => profileDao.updateUserProfile(profile);
 
-  Future deleteUserById(int id) => profileDao.deleteUser(id);
+  Future deleteUserProfileById(String login) => profileDao.deleteUserProfile(login);
 
-  Future deleteAllUsers() => profileDao.deleteAllUsers();
+  Future deleteAllUsersProfile() => profileDao.deleteAllUsersProfiles();
+
+  Future getUserProfile(String login) => profileDao.getUserProfile(login);
+
+  Future checkIfExist(String login) => profileDao.checkIfExist(login);
 }

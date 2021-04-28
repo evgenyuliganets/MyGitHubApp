@@ -39,10 +39,10 @@ class RepoDataRepository {
       if (github ==null) {
         throw RepoNotFoundException();
       } else {
-        List<Repository> userRepos = await github.repositories.listUserRepositories(userName,sort: 'created').toList();
+        List<Repository> userRepos = await github.repositories.listUserRepositories(userName,page: 1, perPage: 7, direction:"desc" ).toList();
         if(userRepos.length>7){
           List<Repository> lists = new List<Repository>(7);
-          lists= userRepos.getRange(userRepos.length-7, userRepos.length).toList();
+          lists= userRepos.toList();
           userRepos.clear();
           userRepos=[...lists];
         }

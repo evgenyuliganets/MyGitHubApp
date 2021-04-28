@@ -1,11 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_github_app/home/bloc/profile_bloc.dart';
-import 'package:my_github_app/home/data_repository/data_repository.dart';
-import 'package:my_github_app/home/models/profile.dart';
-import 'package:my_github_app/home/view/profile_full.dart';
-import 'package:my_github_app/home/view/text_field.dart';
 import 'package:my_github_app/repository/bloc/repository_bloc.dart';
 import 'package:my_github_app/repository/data_repository/data_repository.dart';
 import 'package:my_github_app/repository/models/model.dart';
@@ -137,24 +132,31 @@ ListView buildReposData(List<Repository> repos) {
       }
       else return Card(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              leading:repos[index].name==null? Container() : Text(
+              leading:repos[index].language==null? new Column (crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Unknown',style: TextStyle(
+                color: Color(0xff454545),
+                fontSize: 20,
+              ),),Text('Language',style: TextStyle(
+                color: Color(0xff454545),
+                fontSize: 20,
+              ),)],) : Column (crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center, children: [Text(
                 repos[index].language.toString(),
                 style: TextStyle(
                   color: Color(0xff454545),
                   fontSize: 20,
                 ),
-              ),
-              title: Center(child:Column(crossAxisAlignment: CrossAxisAlignment.start, children: [(repos[index].name==null? Container() :Text(repos[index].name)),
+              ),],),
+              title: Center(child:Column(mainAxisAlignment: MainAxisAlignment.start, children: [(repos[index].name==null? Container() :Text(repos[index].name)),
+                ]),),
+              subtitle:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 (repos[index].owner==null
-                    ?Container()
-                    :RichText(text:TextSpan(text:'Owner:  ${repos[index].owner}',style: TextStyle(color:repos[index].name==null
-                    ? Color(0xff212121)
-                    :Color(0xff474747)),)))]),),
-              subtitle:Center(child:repos[index].description==null? Container(padding: EdgeInsets.all(0),) : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
-                  0xff5a5a5a)),text:'Description: '+repos[index].description)),),
+                  ?Container()
+                  :RichText(text:TextSpan(text:'Owner: ' +repos[index].owner,style: TextStyle(color:Color(0xff474747)),))),
+                repos[index].description==null? Container() : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
+                  0xff5a5a5a)),text:'Description: '+repos[index].description)),
+              ]),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

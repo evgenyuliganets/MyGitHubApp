@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'package:my_github_app/database/authentication/model.dart';
 import 'package:my_github_app/database/profile/profiles_model.dart';
 import 'database_profile.dart';
 
@@ -11,7 +13,7 @@ class ProfileDao {
     return result;
   }
 
-  Future<List<ProfileModel>> getUsers({List<String> columns, String query}) async {
+  Future<List<ProfileModel>> getUsersProfiles({List<String> columns, String query}) async {
     final db = await dbProvider.database;
 
     List<Map<String, dynamic>> result;
@@ -27,24 +29,52 @@ class ProfileDao {
         : [];
     return users;
   }
-
-  Future<int> updateUser(ProfileModel user) async {
+  Future<ProfileModel> getUserProfile(String login) async {
     final db = await dbProvider.database;
 
+    var queryResult = await db.rawQuery('SELECT * FROM Profile WHERE login="$login"') ;
+    var res = queryResult.toList();
+    if (queryResult!=null){
+      return ProfileModel(
+        username: res.first.values.elementAt(1),
+        login: res.first.values.elementAt(2),
+        followers: res.first.values.elementAt(3),
+        following: res.first.values.elementAt(4),
+        publicRepos: res.first.values.elementAt(5),
+        bio: res.first.values.elementAt(6),
+        image: res.first.values.elementAt(7),
+      );
+    }
+    else return ProfileModel();
+  }
+  Future<int> updateUserProfile(ProfileModel user) async {
+    final db = await dbProvider.database;
+    var queryResult = await db.rawQuery('SELECT * FROM Profile WHERE login="${user.login}"');
+    var res = queryResult.toList();
+    user.id = res.first.values.elementAt(0);
     var result = await db.update(profileTABLE, user.toDatabaseJson(),
-        where: "id = ?", whereArgs: [user.id]);
-
+        where: 'id = ${res.first.values.elementAt(0)}');
+    print(result);
     return result;
   }
-
-  Future<int> deleteUser(int id) async {
+  Future<bool> checkIfExist(String login) async {
     final db = await dbProvider.database;
-    var result = await db.delete(profileTABLE, where: 'id = ?', whereArgs: [id]);
+
+    var queryResult = await db.rawQuery('SELECT * FROM Profile WHERE login="$login"');
+    if (queryResult.isNotEmpty)
+      return true;
+    else
+      return false;
+  }
+
+  Future<int> deleteUserProfile(String login) async {
+    final db = await dbProvider.database;
+    var result = await db.delete(profileTABLE, where: 'login = ?', whereArgs: [login]);
 
     return result;
   }
 
-  Future deleteAllUsers() async {
+  Future deleteAllUsersProfiles() async {
     final db = await dbProvider.database;
     var result = await db.delete(
       profileTABLE,

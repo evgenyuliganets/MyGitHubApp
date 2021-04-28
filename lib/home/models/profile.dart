@@ -1,3 +1,7 @@
+
+
+import 'package:flutter/material.dart';
+
 class Profile {
   final String name;
   final String login;
@@ -5,7 +9,7 @@ class Profile {
   final int following;
   final int publicRepos;
   final String bio;
-  final String image;
+  final ImageProvider image;
 
   Profile({
     this.name,

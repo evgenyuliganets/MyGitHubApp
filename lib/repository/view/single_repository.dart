@@ -1,18 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_github_app/database/authentication/users_repository.dart';
-import 'package:my_github_app/database/profile/profiles_repository.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 import 'package:my_github_app/home/data_repository/data_repository.dart';
-import 'package:my_github_app/home/view/profile_full.dart';
 import 'package:my_github_app/home/view/profile_single_short.dart';
 import 'package:my_github_app/repository/bloc/repository_bloc.dart';
 import 'package:my_github_app/repository/models/model.dart';
-import 'package:my_github_app/repository/view/build_short_repo_data.dart';
-import 'package:my_github_app/repository/view/build_user_repos.dart';
-import 'package:my_github_app/repository/view/repos_text_field.dart';
-
 import 'build_single_repo.dart';
 
 

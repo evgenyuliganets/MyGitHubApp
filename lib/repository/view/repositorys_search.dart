@@ -41,15 +41,15 @@ class _GitReposSearchState extends State<GitReposSearch> {
           builder: (context, state) {
             if (state is RepositoryInitial)
               return buildInitialStart();
-            else if (state is UserRepositoriesLoading)
+            else if (state is RepositoriesLoading)
               return buildLoadingState();
             else if (state is RepositoriesLoaded)
               return buildReposData(state.repository);
             else
-              return buildInitialTextField();
+              return buildErrorState();
           },
           listener: (context, state) {
-            if (state is RepositoryError) {
+            if (state is RepositoriesError) {
               Scaffold.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.error),
@@ -80,6 +80,22 @@ class _GitReposSearchState extends State<GitReposSearch> {
               height: 150,),
             Container(height: 10,),
             Text('Search your first repository.',style: TextStyle(color: Color(0xff616161),fontSize: 20),)
+          ])
+        ],
+      ),);
+  }
+  Widget buildErrorState() {
+    return Center(
+      child: Column(
+        children:[
+          RepoTextField(),
+          Container(height: 30,),
+          Column(children:[
+            Icon(Icons.signal_cellular_connected_no_internet_4_bar,
+              color: Color(0xff878787),
+              size: 150,),
+            Container(height: 10,),
+            Text('Sorry Repos has not been found!',style: TextStyle(color: Color(0xff616161),fontSize: 20),)
           ])
         ],
       ),);

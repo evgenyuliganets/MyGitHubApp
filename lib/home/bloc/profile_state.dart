@@ -14,7 +14,8 @@ class ProfileLoading extends ProfileState {
 
 class ProfileLoaded extends ProfileState {
   final Profile profile;
-  const ProfileLoaded(this.profile);
+  final String message;
+  const ProfileLoaded({this.profile,this.message});
 }
 
 class ProfileError extends ProfileState {

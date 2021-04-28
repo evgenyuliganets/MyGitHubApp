@@ -32,8 +32,6 @@ class _GitProfileShortState extends State<GitProfileShort> {
               return initialProfile();
             else if (state is ProfileLoading)
               return buildLoadingState();
-            else if (state is ProfileLoading)
-              return buildLoadingState();
             else if (state is ProfileLoaded)
               return buildUser(state.profile);
             else

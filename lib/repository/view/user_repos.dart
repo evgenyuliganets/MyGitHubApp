@@ -24,8 +24,8 @@ final _userRepository = UsersRepository();
 class _GitUserReposState extends State<GitUserRepos> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:  Container(
+    return  Container(constraints: BoxConstraints(
+        maxHeight: 500,),
           child: BlocConsumer<RepositoryBloc, RepositoryState>(
             builder: (context, state) {
               if (state is RepositoryInitial)
@@ -48,7 +48,7 @@ class _GitUserReposState extends State<GitUserRepos> {
               else if (state is UserRepositoriesLoaded)
                 return buildUserReposData(state.repository);
             },
-          )));
+          ));
 
   }
   Widget buildErrorState() {

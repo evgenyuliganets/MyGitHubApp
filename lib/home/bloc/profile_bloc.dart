@@ -20,21 +20,28 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (event is GetUser) {
         try {
           yield (ProfileLoading());
-          final profile = await _profileRepo.fetchUser(event.userName);
-          yield (ProfileLoaded(profile));
-        }  on UserNotFoundException {
-        yield (ProfileError('This User was Not Found!'));
-        } on TimeoutException {
+          final profile = await _profileRepo.fetchUser(event.userName).timeout(Duration(seconds: 4));
+          yield (ProfileLoaded(profile:profile));
+        }on TimeoutException {
+          try {
+            yield (ProfileLoading());
+            final profile = await _profileRepo.fetchUserFromDataBase(event.userName);
+            yield (ProfileLoaded(profile: profile,message: "Data was loaded from Database"));
+          }
+          on UserNotFoundException{
+            yield (ProfileError('This User was Not Found!'));
+          }
+        }on UserNotFoundException {
         yield (ProfileError("You have reached limit of query's! Wait at least a minute to continue."));}
       }
       else if (event is GetUsers) {
         try {
           yield (ProfilesLoading());
-          final profile = await _profileRepo.fetchUsers(event.userName);
+          final profile = await _profileRepo.fetchUsers(event.userName).timeout(Duration(seconds: 4));
           yield (ProfilesLoaded(profile));
         }on UserNotFoundException {
-          yield (ProfilesError('This User was Not Found!'));
-        } on TimeoutException {
+          yield (ProfilesError('This Users was Not Found!'));}
+         on TimeoutException {
           yield (ProfilesError("You have reached limit of query's! Wait at least a minute to continue."));}
       }
 

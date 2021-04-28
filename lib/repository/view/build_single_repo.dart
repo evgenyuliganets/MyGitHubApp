@@ -71,14 +71,21 @@ Column buildSingleRepoData(Repository repo) {
                        Column(
                          children: [
                            Text(
-                             repo.createdAt.toString(),
+                             repo.createdAt.toString().substring(0,10),
                              style: TextStyle(
                                color: Color(0xff3e3e3e),
                                fontSize: 20,
                              ),
                            ),
                            Text(
-                             "Updated at",
+                             repo.createdAt.toString().substring(10,repo.createdAt.length),
+                             style: TextStyle(
+                               color: Color(0xff3e3e3e),
+                               fontSize: 20,
+                             ),
+                           ),
+                           Text(
+                             "Created at",
                              style: TextStyle(
                                fontSize: 15,
                              ),

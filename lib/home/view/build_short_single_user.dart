@@ -13,14 +13,27 @@ Builder buildSingleUserData(Profile profile) {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Image(image: NetworkImage(profile.image),),
-                title: Row(children: [(profile.name==null? Container() :Text(profile.name)),
+                leading: Image(image:profile.image),
+                title:profile.name==null? (profile.login==null
+                    ?Container()
+                    :RichText(text:TextSpan(text:'  ${profile.login}',style: TextStyle(color:profile.name==null
+                    ? Color(0xff212121)
+                    :Color(0xff474747)),))):
+                profile.name.length <= 15
+                ?Row(children: [(profile.name==null? Container() :Text(profile.name)),
                   (profile.login==null
                       ?Container()
                       :RichText(text:TextSpan(text:'  ${profile.login}',style: TextStyle(color:profile.name==null
                       ? Color(0xff212121)
+                      :Color(0xff474747)),)))])
+                : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [(profile.name==null? Container() :Text(profile.name)),
+                  (profile.login==null
+                      ?Container()
+                      :RichText(text:TextSpan(text:'${profile.login}',style: TextStyle(color:profile.name==null
+                      ? Color(0xff212121)
                       :Color(0xff474747)),)))]),
-                subtitle:profile.bio==null? Container(padding: EdgeInsets.all(0),) : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
+                subtitle:profile.bio==null? Container(child:Text('No Info',style:TextStyle(color: Color(
+                    0xff7a7a7a)))) : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
                     0xff5a5a5a)),text:profile.bio)),
               ),
               Row(

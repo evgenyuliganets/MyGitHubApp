@@ -9,13 +9,14 @@ Column buildUserFullData(Profile profile) {
             children: [
               Column(
                 children: [
+                  Container(height: 5,),
                   if(profile.image !=null)
                   Container(
                     width: 150,
                     height: 150,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Image.network(profile.image,fit: BoxFit.cover,),
+                      child: Image(image:profile.image ,fit: BoxFit.cover,),
                       //Icon
                     ),
                   ),

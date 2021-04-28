@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_github_app/database/authentication/users_repository.dart';
+import 'package:my_github_app/database/profile/profiles_repository.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 import 'package:my_github_app/home/data_repository/data_repository.dart';
 import 'package:my_github_app/home/view/profile_full.dart';
@@ -16,6 +17,9 @@ class GitProfiles extends StatefulWidget {
 final _userRepository = UsersRepository();
 class _GitProfilesState extends State<GitProfiles> {
   String user;
+  refresh() {
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     waitDatabase();
@@ -30,7 +34,7 @@ class _GitProfilesState extends State<GitProfiles> {
                 context,
                 MaterialPageRoute(builder: (context) {
                  return fullProfile();
-                }),);
+                }),).then((value) => setState(() {}));
             }
             ),],),
 
@@ -43,12 +47,12 @@ class _GitProfilesState extends State<GitProfiles> {
                 else if (state is ProfilesLoading)
                   return buildLoadingState();
                 else if (state is ProfilesLoaded)
-                  return buildUserData(state.profile);
+                  return buildUserData(state.profile,refresh);
                 else
-                  return buildInitialTextField();
+                  return buildErrorState();
               },
               listener: (context, state) {
-                if (state is ProfileError) {
+                if (state is ProfilesError) {
                   Scaffold.of(context).showSnackBar(
                     SnackBar(
                       content: Text(state.error),
@@ -60,10 +64,27 @@ class _GitProfilesState extends State<GitProfiles> {
           ),
     );
   }
+
   Widget buildInitialTextField() {
     return Center(
       child: HomeTextField(),
     );
+  }
+  Widget buildErrorState() {
+    return Center(
+      child: Column(
+        children:[
+          HomeTextField(),
+          Container(height: 30,),
+          Column(children:[
+            Icon(Icons.signal_cellular_connected_no_internet_4_bar,
+              color: Color(0xff878787),
+              size: 150,),
+            Container(height: 10,),
+            Text('Sorry Users has not been found!',style: TextStyle(color: Color(0xff616161),fontSize: 20),)
+          ])
+        ],
+      ),);
   }
   Widget buildInitialStart() {
     return Center(
