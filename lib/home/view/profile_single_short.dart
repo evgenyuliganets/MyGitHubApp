@@ -41,7 +41,7 @@ class _GitProfileShortState extends State<GitProfileShort> {
             if (state is  ProfileLoaded) {
               if (state.message != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  SnackBar(duration: const Duration(seconds: 1),
                     content: Text(state.message),
                     backgroundColor: Color(0xff779a76),
                   ),

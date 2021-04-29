@@ -41,7 +41,7 @@ class _SingleRepoState extends State<SingleRepo> {
               listener: (context, state) {
                 if (state is RepositoryError) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    SnackBar(duration: const Duration(seconds: 1),
                       content: Text(state.error),
                     ),
                   );
@@ -49,7 +49,7 @@ class _SingleRepoState extends State<SingleRepo> {
                 if (state is RepositoryLoaded) {
                   if (state.message!=null)
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      SnackBar(duration: const Duration(seconds: 1),
                         content: Text(state.message),
                         backgroundColor: Color(0xff779a76),
                       ),

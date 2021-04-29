@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,10 +17,10 @@ class DataRepository {
     GitHub github= GitHub(auth: Authentication.basic(await _userRepository.getAllUser().then((value) =>
         value.first.username.toString()), await _userRepository.getAllUser().then((value) =>
         value.first.password.toString())));
-      if (github ==null) {
-        throw UserNotFoundException();
-      } else {
         User user =await github.users.getUser(userName);
+      if (user== null) {
+        throw TimeoutException;
+      } else {
         final profile = Profile(
           login: user.login,
           name: user.name,
@@ -35,6 +37,9 @@ class DataRepository {
     catch (Error) {
       if (Error is UnknownError)
         throw UnknownError;
+      else if (Error is SocketException){
+        throw TimeoutException("");
+      }
       else throw UserNotFoundException();
     }
   }
@@ -88,7 +93,7 @@ class DataRepository {
       final _profileRepository = ProfilesRepository();
       List<ProfileModel> profileDatabase = await _profileRepository
           .getAllUserProfile();
-      if (profileDatabase == null) {
+      if (profileDatabase.isEmpty) {
         throw UserNotFoundException();
       } else {
         var j = 0;
@@ -122,8 +127,8 @@ class DataRepository {
               value.first.password.toString())));
       List<User> search = await SearchService(github)
           .users(userName,pages: 1,perPage: 5).toList();
-      if (search == null) {
-        throw UserNotFoundException();
+      if (search.isEmpty) {
+        throw TimeoutException("");
       } else {
         List<String> names= new List<String>(search.length);var i=0;
         search.forEach((element){
@@ -145,9 +150,12 @@ class DataRepository {
         return profile;
       }
     }
-    catch (Error) {
+    catch(Error) {
       if (Error is UnknownError)
         throw UnknownError;
+      else if (Error is SocketException || Error is TimeoutException){
+        throw TimeoutException("");
+      }
       else throw UserNotFoundException();
     }
   }

@@ -34,7 +34,6 @@ class _GitProfileState extends State<GitProfile> {
         ),
       body: SingleChildScrollView(child: Container(
         child: BlocConsumer<ProfileBloc, ProfileState>(
-          // ignore: missing_return
           builder: (context, state) {
             if (state is ProfilesInitial)
               return waitDatabase();
@@ -56,7 +55,7 @@ class _GitProfileState extends State<GitProfile> {
             if (state is  ProfileLoaded) {
               if (state.message!= null){
                 ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                SnackBar(duration: const Duration(seconds: 1),
                   content: Text(state.message),
                   backgroundColor: Color(0xff779a76),
                 ),
@@ -84,7 +83,7 @@ class _GitProfileState extends State<GitProfile> {
   Widget userRepos() {
     return FutureBuilder(builder:(context,projectSnap) {
       return Container(constraints: BoxConstraints(
-        maxHeight: 500,),child: BlocProvider(
+        maxHeight: 1300,),child: BlocProvider(
         create: (context) => RepositoryBloc(RepoDataRepository()),
         child:GitUserRepos(widget.userMain),));
 
@@ -95,6 +94,8 @@ class _GitProfileState extends State<GitProfile> {
     return  Column(
       children: [
         buildUserFullData(profile),
+        if(user==widget.userMain)
+          buildLogout(),
         Column(children:[
           Text(
               'Repositories:',
@@ -103,10 +104,8 @@ class _GitProfileState extends State<GitProfile> {
                 fontSize: 20,)
           ),
         Container(constraints: BoxConstraints(
-          maxHeight: 500,),
+          maxHeight: 1300,),
           child: userRepos(),),]),
-        if(user==widget.userMain)
-        buildLogout(),
       ],
     );
   }

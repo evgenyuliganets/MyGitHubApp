@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:github/github.dart';
 import 'package:my_github_app/database/authentication/users_repository.dart';
@@ -17,11 +18,11 @@ class RepoDataRepository {
               value.first.username.toString()),
           await _userRepository.getAllUser().then((value) =>
               value.first.password.toString())));
-      if (github == null) {
-        throw RepoNotFoundException();
-      } else {
         Repository repository = await github.repositories.getRepository(
             RepositorySlug(owner, name));
+      if (repository == null) {
+        throw RepoNotFoundException();
+      } else {
         final repo = my.Repository(
           name: repository.name,
           description: repository.description,
@@ -38,6 +39,9 @@ class RepoDataRepository {
     catch (Error) {
       if (Error is UnknownError)
         throw UnknownError;
+      else if (Error is SocketException){
+        throw TimeoutException("");
+      }
       else throw RepoNotFoundException();
     }
   }
@@ -74,12 +78,12 @@ class RepoDataRepository {
               value.first.username.toString()),
           await _userRepository.getAllUser().then((value) =>
               value.first.password.toString())));
-      if (github == null) {
-        throw RepoNotFoundException();
-      } else {
         List<Repository> userRepos = await github.repositories
             .listUserRepositories(
-            userName, page: 1, perPage: 7, direction: "desc").toList();
+            userName, page: 1, direction: "desc").toList();
+      if (userRepos.isEmpty) {
+        throw RepoNotFoundException();
+      } else {
         if (userRepos.length > 7) {
           List<Repository> lists = new List<Repository>(7);
           lists = userRepos.toList();
@@ -111,6 +115,9 @@ class RepoDataRepository {
     catch (Error) {
       if (Error is UnknownError)
         throw UnknownError;
+      else if (Error is SocketException){
+        throw TimeoutException("");
+      }
       else throw RepoNotFoundException();
     }
   }
@@ -125,8 +132,8 @@ class RepoDataRepository {
               value.first.password.toString())));
       List<Repository> userRepos = await SearchService(github)
           .repositories(repoName, pages: 1).toList();
-      if (userRepos == null) {
-        throw RepoNotFoundException();
+      if (userRepos.isEmpty) {
+        throw TimeoutException("");
       } else {
         var j = 0;
         List<my.Repository> main(List<Repository>users) {
@@ -154,6 +161,9 @@ class RepoDataRepository {
     catch (Error) {
       if (Error is UnknownError)
         throw UnknownError;
+      else if (Error is SocketException || Error is TimeoutException){
+        throw TimeoutException("");
+      }
       else throw RepoNotFoundException();
     }
   }
@@ -189,7 +199,7 @@ class RepoDataRepository {
       final _repoRepository = RepoRepository();
       List<RepositoryModel> repoDatabase = await _repoRepository
           .getUserRepositories(owner);
-      if (repoDatabase == null) {
+      if (repoDatabase.isEmpty) {
         throw RepoNotFoundException();
       } else {
         var j = 0;
@@ -221,7 +231,7 @@ class RepoDataRepository {
       final _repoRepository = RepoRepository();
       List<RepositoryModel> repoDatabase = await _repoRepository
           .getAllRepositories();
-      if (repoDatabase == null) {
+      if (repoDatabase.isEmpty) {
         throw RepoNotFoundException();
       } else {
         var j = 0;

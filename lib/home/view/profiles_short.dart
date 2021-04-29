@@ -52,8 +52,8 @@ class _GitProfilesState extends State<GitProfiles> {
               },
               listener: (context, state) {
                 if (state is ProfilesError) {
-                  Scaffold.of(context).showSnackBar(
-                    SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(duration: const Duration(seconds: 1),
                       content: Text(state.error),
                     ),
                   );
@@ -61,7 +61,7 @@ class _GitProfilesState extends State<GitProfiles> {
                 if (state is  ProfilesLoaded) {
                   if (state.message != null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      SnackBar(duration: const Duration(seconds: 1),
                         content: Text(state.message),
                         backgroundColor: Color(0xff779a76),
                       ),

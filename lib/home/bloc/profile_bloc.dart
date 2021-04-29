@@ -61,26 +61,53 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
 
 
-      else if (event is GetUsers) {           //GetSearchUsers or DatabaseUsers
+      else if (event is GetUsers) { //GetSearchUsers or DatabaseUsers
         try {
           yield (ProfilesLoading());
-          final profile = await _profileRepo.fetchUsers(event.userName).timeout(Duration(seconds: 3));
+          final profile = await _profileRepo.fetchUsers(event.userName).timeout(
+              Duration(seconds: 3));
           yield (ProfilesLoaded(profile: profile));
         }
-         on TimeoutException {
-           try {
-             yield (ProfilesLoading());
-             final profile = await _profileRepo.fetchUsersFromDataBase(event.userName);
-             yield (ProfilesLoaded(profile: profile,message: "Users have been loaded from the database"));
-           }
-           on UserNotFoundException{
-             yield (ProfilesError('Not a single User was found in the database!'));
-           }
-        }
-        on UserNotFoundException {
-          yield (ProfilesError('Users was Not Found!'));}
-      }
 
+        on TimeoutException {
+          yield (ProfilesError("No Internet Connection"));
+          try {
+            yield (ProfilesLoading());
+            final profile = await _profileRepo.fetchUsersFromDataBase(event.userName);
+            yield (ProfilesLoaded(profile: profile,
+                message: "Users have been loaded from the database"));
+          }
+          on UserNotFoundException {
+            yield (ProfilesError(
+                'Not a single User was found in the database!'));
+          }
+        }
+
+        on git.UnknownError{
+          yield (ProfilesError("You have reached limit of query's! Wait at least a minute to continue."));
+          try {
+            yield (ProfilesLoading());
+            final profile = await _profileRepo.fetchUsersFromDataBase(event.userName);
+            yield (ProfilesLoaded(profile: profile,message: "User was loaded from Database"));
+          }
+          on UserNotFoundException{
+            yield (ProfilesError('This User was not found in the database!'));}
+        }
+
+        on UserNotFoundException {
+          yield (ProfilesError('Users was Not Found!'));
+          try {
+            yield (ProfilesLoading());
+            final profile = await _profileRepo.fetchUsersFromDataBase(event.userName);
+            yield (ProfilesLoaded(profile: profile,
+                message: "Users have been loaded from the database"));
+          }
+          on UserNotFoundException {
+            yield (ProfilesError(
+                'Not a single User was found in the database!'));
+          }
+        }
+      }
   }
 }
 

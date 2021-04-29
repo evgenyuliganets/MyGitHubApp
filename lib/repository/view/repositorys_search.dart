@@ -53,7 +53,7 @@ class _GitReposSearchState extends State<GitReposSearch> {
           listener: (context, state) {
             if (state is RepositoriesError) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                SnackBar(duration: const Duration(seconds: 1),
                   content: Text(state.error),
                 ),
               );
@@ -61,7 +61,7 @@ class _GitReposSearchState extends State<GitReposSearch> {
             if (state is RepositoriesLoaded) {
               if (state.message!=null)
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                SnackBar(duration: const Duration(seconds: 1),
                   content: Text(state.message),
                   backgroundColor: Color(0xff779a76),
                 ),

@@ -11,6 +11,7 @@ import 'package:my_github_app/repository/view/single_repository.dart';
 
 ListView buildUserReposData(List<Repository> repos) {
   return ListView.builder(//ListView
+    physics: NeverScrollableScrollPhysics(),
     shrinkWrap: true,
     itemCount: repos.length,
     itemBuilder: (BuildContext context, int index) {

@@ -90,7 +90,7 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
       }
 
       on RepoNotFoundException {
-        yield (RepositoriesError('This Repo was Not Found!'));
+        yield (RepositoriesError('This Repos was Not Found!'));
       }
     }
 
@@ -98,7 +98,7 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
     else if (event is GetUserRepos) {         //GetUserRepos or DatabaseUserRepos
       try {
         yield (UserRepositoriesLoading());
-        final repos = await _profileRepo.fetchUserRepos(event.userName).timeout(Duration(seconds: 2));
+        final repos =   await _profileRepo.fetchUserRepos(event.userName).timeout(Duration(seconds: 2));
         yield (UserRepositoriesLoaded(repos));
       }
 
