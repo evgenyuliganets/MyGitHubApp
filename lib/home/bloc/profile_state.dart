@@ -35,5 +35,6 @@ class ProfilesError extends ProfileState {
 
 class ProfilesLoaded extends ProfileState {
   final List<Profile> profile;
-  const ProfilesLoaded(this.profile);
+  final String message;
+  const ProfilesLoaded({this.profile,this.message});
 }

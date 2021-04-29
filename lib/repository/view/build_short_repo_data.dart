@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_github_app/database/repository/repo_repository.dart';
 import 'package:my_github_app/repository/bloc/repository_bloc.dart';
 import 'package:my_github_app/repository/data_repository/data_repository.dart';
 import 'package:my_github_app/repository/models/model.dart';
@@ -8,7 +9,9 @@ import 'package:my_github_app/repository/view/repos_text_field.dart';
 import 'package:my_github_app/repository/view/single_repository.dart';
 
 
-ListView buildReposData(List<Repository> repos) {
+ListView buildReposData(List<Repository> repos,Function() notifyParent) {
+  var repoRepository= RepoRepository();
+  bool val;
   return ListView.builder(//ListView
     shrinkWrap: true,
     itemCount: repos.length,
@@ -21,13 +24,14 @@ ListView buildReposData(List<Repository> repos) {
          MaterialPageRoute(builder: (context) => BlocProvider(
            create: (context) => RepositoryBloc(RepoDataRepository()),
            child:SingleRepo(repos[index].owner,repos[index].name),
-         ),),);
+         ),),).then((value) => notifyParent.call());
      },
      child: Column(
       children: [
         Column(children:[RepoTextField(),]),//Search
       Column(
         children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children:[
           if(repos.first.name !=null)
             SizedBox(height: 5),
           if(repos.first.name !=null)
@@ -39,6 +43,16 @@ ListView buildReposData(List<Repository> repos) {
               fontWeight: FontWeight.bold,
             ),
           ),
+          FutureBuilder(
+              future: repoRepository.checkIfExist(repos[index].name,repos[index].owner).then((value) => val= value),
+              builder: (context,waiter) {
+                return Container(height: 30, width: 30, child:
+                waiter.connectionState==ConnectionState.done
+                    ? val == false ? Container() :Icon(Icons.save, size: 30, color: Colors.green,)
+                    :CircularProgressIndicator()
+                );
+              }),
+        ]),
           if(repos.first.owner !=null)
             SizedBox(height: 5),
           if(repos.first.owner !=null)
@@ -157,6 +171,15 @@ ListView buildReposData(List<Repository> repos) {
                 repos[index].description==null? Container() : RichText(overflow: TextOverflow.ellipsis,maxLines: 2, text:TextSpan(style: TextStyle(color: Color(
                   0xff5a5a5a)),text:'Description: '+repos[index].description)),
               ]),
+              trailing: FutureBuilder(
+                  future: repoRepository.checkIfExist(repos[index].name,repos[index].owner).then((value) => val= value),
+                  builder: (context,waiter) {
+                    return Container(height: 30, width: 30, child:
+                    waiter.connectionState==ConnectionState.done
+                        ? val == false ? Container() :Icon(Icons.save, size: 30, color: Colors.green,)
+                        :CircularProgressIndicator()
+                    );
+                  }),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -169,7 +192,7 @@ ListView buildReposData(List<Repository> repos) {
                       MaterialPageRoute(builder: (context) => BlocProvider(
                         create: (context) => RepositoryBloc(RepoDataRepository()),
                         child:SingleRepo(repos[index].owner,repos[index].name),
-                      ),),);
+                      ),),).then((value) => notifyParent.call());
                   },
                 ),
                 const SizedBox(width: 8),

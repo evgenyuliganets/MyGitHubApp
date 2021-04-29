@@ -5,7 +5,6 @@ import 'package:my_github_app/database/authentication/users_repository.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 import 'package:my_github_app/home/data_repository/data_repository.dart';
 import 'package:my_github_app/home/view/profile_full.dart';
-import 'package:my_github_app/home/view/text_field.dart';
 import 'package:my_github_app/repository/bloc/repository_bloc.dart';
 import 'package:my_github_app/repository/view/build_short_repo_data.dart';
 import 'package:my_github_app/repository/view/repos_text_field.dart';
@@ -18,6 +17,9 @@ class GitReposSearch extends StatefulWidget {
 final _userRepository = UsersRepository();
 class _GitReposSearchState extends State<GitReposSearch> {
   String user;
+  refresh() {
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,15 +46,24 @@ class _GitReposSearchState extends State<GitReposSearch> {
             else if (state is RepositoriesLoading)
               return buildLoadingState();
             else if (state is RepositoriesLoaded)
-              return buildReposData(state.repository);
+              return buildReposData(state.repository,refresh);
             else
               return buildErrorState();
           },
           listener: (context, state) {
             if (state is RepositoriesError) {
-              Scaffold.of(context).showSnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.error),
+                ),
+              );
+            }
+            if (state is RepositoriesLoaded) {
+              if (state.message!=null)
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Color(0xff779a76),
                 ),
               );
             }
@@ -116,7 +127,7 @@ class _GitReposSearchState extends State<GitReposSearch> {
       child: CircularProgressIndicator(),
     );
   }
-  Future getUserFromDataBase (_userRepository) async {
-    user = await _userRepository.getAllUser().then((value) =>value.first.username.toString());
+  Future getUserFromDataBase (UsersRepository usersRepository) async {
+    user = await usersRepository.getAllUser().then((value) =>value.first.username.toString());
   }
 }

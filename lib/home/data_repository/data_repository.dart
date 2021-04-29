@@ -33,7 +33,9 @@ class DataRepository {
       }
     }
     catch (Error) {
-      throw UserNotFoundException();
+      if (Error is UnknownError)
+        throw UnknownError;
+      else throw UserNotFoundException();
     }
   }
   addProfileToDatabase(Profile profile, String url) async {
@@ -66,8 +68,8 @@ class DataRepository {
         throw UserNotFoundException();
       } else {
         final profile = Profile(
-          login: profileDatabase.login,
           name: profileDatabase.username,
+          login: profileDatabase.login,
           bio: profileDatabase.bio,
           followers: profileDatabase.followers,
           following: profileDatabase.following,
@@ -81,7 +83,35 @@ class DataRepository {
       throw UserNotFoundException();
     }
   }
-
+  Future <List<Profile>> fetchUsersFromDataBase(String userName) async {
+    try {
+      final _profileRepository = ProfilesRepository();
+      List<ProfileModel> profileDatabase = await _profileRepository
+          .getAllUserProfile();
+      if (profileDatabase == null) {
+        throw UserNotFoundException();
+      } else {
+        var j = 0;
+        List<Profile> list= new List<Profile>(profileDatabase.length);
+        list.forEach((element) {
+          list[j]= Profile(
+            name: profileDatabase[j].username,
+            login: profileDatabase[j].login,
+            bio: profileDatabase[j].bio,
+            followers: profileDatabase[j].followers,
+            following: profileDatabase[j].following,
+            image: Image.memory(profileDatabase[j].image).image,
+            publicRepos: profileDatabase[j].publicRepos,
+          );
+          j++;
+        });
+        return list;
+      }
+    }
+    catch (Error) {
+    throw UserNotFoundException();
+    }
+  }
   Future<List<Profile>> fetchUsers(String userName) async {
     try {
       final _userRepository = UsersRepository();
@@ -116,7 +146,9 @@ class DataRepository {
       }
     }
     catch (Error) {
-      throw UserNotFoundException();
+      if (Error is UnknownError)
+        throw UnknownError;
+      else throw UserNotFoundException();
     }
   }
 }

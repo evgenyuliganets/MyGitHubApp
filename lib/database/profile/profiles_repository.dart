@@ -10,7 +10,7 @@ class ProfilesRepository {
 
   Future updateUserProfile(ProfileModel profile) => profileDao.updateUserProfile(profile);
 
-  Future deleteUserProfileById(String login) => profileDao.deleteUserProfile(login);
+  Future deleteUserProfileByLogin(String login) => profileDao.deleteUserProfile(login);
 
   Future deleteAllUsersProfile() => profileDao.deleteAllUsersProfiles();
 

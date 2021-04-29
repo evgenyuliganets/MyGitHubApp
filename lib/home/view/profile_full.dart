@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_github_app/authentication/bloc/authentication_bloc.dart';
 import 'package:my_github_app/database/authentication/users_repository.dart';
 import 'package:my_github_app/database/profile/profiles_repository.dart';
+import 'package:my_github_app/database/repository/repo_repository.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 import 'package:my_github_app/home/models/profile.dart';
 import 'package:my_github_app/home/view/build_full_user_data.dart';
@@ -23,11 +24,11 @@ class GitProfile extends StatefulWidget {
 }
 final _userRepository = UsersRepository();
 final _profileRepository = ProfilesRepository();
+final _repoRepository = RepoRepository();
 class _GitProfileState extends State<GitProfile> {
   String user;
   @override
   Widget build(BuildContext context) {
-    waitDatabase();
     return Scaffold(
       appBar: AppBar( title:Text('Profile'),backgroundColor: Colors.black54,
         ),
@@ -36,7 +37,7 @@ class _GitProfileState extends State<GitProfile> {
           // ignore: missing_return
           builder: (context, state) {
             if (state is ProfilesInitial)
-              return initialProfile();
+              return waitDatabase();
             else if (state is ProfileLoading)
               return buildLoadingState();
             else if (state is ProfileLoaded)
@@ -46,17 +47,18 @@ class _GitProfileState extends State<GitProfile> {
           },
           listener: (context, state) {
             if (state is  ProfileError) {
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(duration: const Duration(seconds: 1),
                   content: Text(state.error),
                 ),
               );
             }
             if (state is  ProfileLoaded) {
               if (state.message!= null){
-              Scaffold.of(context).showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
+                  backgroundColor: Color(0xff779a76),
                 ),
               );}
             }
@@ -73,8 +75,10 @@ class _GitProfileState extends State<GitProfile> {
     }
   Widget waitDatabase() {
     return FutureBuilder(builder:(context,projectSnap) {
-      return buildLoadingState();
-    },
+      if(projectSnap.connectionState==ConnectionState.done){
+      return initialProfile();
+    }else{return buildLoadingState();}
+      },
         future: getUserFromDataBase(_userRepository));
   }
   Widget userRepos() {
@@ -130,6 +134,7 @@ class _GitProfileState extends State<GitProfile> {
             .add(AuthenticationLogoutRequested());
         _userRepository.deleteAllUsers();
         _profileRepository.deleteAllUsersProfile();
+        _repoRepository.deleteAllRepositories();
         Navigator.pushAndRemoveUntil<void>(context,
           LoginPage.route(),
               (route) => false,

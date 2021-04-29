@@ -39,15 +39,24 @@ class _GitUserReposState extends State<GitUserRepos> {
             },
             listener: (context, state) {
               if (state is UserRepositoriesError) {
-                Scaffold.of(context).showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(state.error),
                   ),
                 );
               }
-              else if (state is UserRepositoriesLoaded)
-                return buildUserReposData(state.repository);
+              if (state is  UserRepositoriesLoaded) {
+                if (state.message != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Color(0xff779a76),
+                    ),
+                  );
+                }
+              }
             },
+
           ));
 
   }

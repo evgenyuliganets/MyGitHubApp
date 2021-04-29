@@ -38,12 +38,15 @@ class _GitProfileShortState extends State<GitProfileShort> {
               return buildErrorState();
           },
           listener: (context, state) {
-            if (state is ProfileError) {
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.error),
-                ),
-              );
+            if (state is  ProfileLoaded) {
+              if (state.message != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Color(0xff779a76),
+                  ),
+                );
+              }
             }
           },
         ),

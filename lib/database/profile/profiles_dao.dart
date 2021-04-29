@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
-import 'package:my_github_app/database/authentication/model.dart';
 import 'package:my_github_app/database/profile/profiles_model.dart';
 import 'database_profile.dart';
 

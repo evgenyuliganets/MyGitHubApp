@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-final profileTABLE = 'Profile';
-class DatabaseProfileProvider {
-  static final DatabaseProfileProvider dbProvider = DatabaseProfileProvider();
+final repositoryTABLE = 'Repository';
+class DatabaseRepositoryProvider {
+  static final DatabaseRepositoryProvider dbProvider = DatabaseRepositoryProvider();
   Database _database;
   Future<Database> get database async {
     if (_database != null) return _database;
@@ -14,7 +14,7 @@ class DatabaseProfileProvider {
   }
   createDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "Profile.db");
+    String path = join(documentsDirectory.path, "Repository.db");
     var database = await openDatabase(path,
         version: 1, onCreate: initDB, onUpgrade: onUpgrade);
     return database;
@@ -23,15 +23,16 @@ class DatabaseProfileProvider {
     if (newVersion > oldVersion) {}
   }
   void initDB(Database database, int version) async {
-    await database.execute("CREATE TABLE $profileTABLE ("
+    await database.execute("CREATE TABLE $repositoryTABLE ("
         "id INTEGER PRIMARY KEY, "
-        "username TEXT, "
-        "login TEXT, "
-        "followers INTEGER, "
-        "following INTEGER, "
-        "publicRepos INTEGER, "
-        "bio TEXT, "
-        "image BLOB "
+        "name TEXT, "
+        "description TEXT, "
+        "createdAt TEXT, "
+        "updatedAt TEXT, "
+        "language TEXT, "
+        "owner TEXT, "
+        "watchersCount INTEGER, "
+        "defaultBranch TEXT "
         ")");
   }
 }

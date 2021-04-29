@@ -40,11 +40,20 @@ class _SingleRepoState extends State<SingleRepo> {
               },
               listener: (context, state) {
                 if (state is RepositoryError) {
-                  Scaffold.of(context).showSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(state.error),
                     ),
                   );
+                }
+                if (state is RepositoryLoaded) {
+                  if (state.message!=null)
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: Color(0xff779a76),
+                      ),
+                    );
                 }
               },
             )));

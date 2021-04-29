@@ -13,7 +13,7 @@ class ProfileModel {
   factory ProfileModel.fromDatabaseJson(Map<String, dynamic> data) => ProfileModel(
     id: data['id'],
     username: data['username'],
-    login: data['password'] ,
+    login: data['login'] ,
     followers: data['followers'],
     following: data['following'],
     publicRepos: data['publicRepos'],

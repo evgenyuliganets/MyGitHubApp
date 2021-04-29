@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_github_app/database/authentication/users_repository.dart';
-import 'package:my_github_app/database/profile/profiles_repository.dart';
 import 'package:my_github_app/home/bloc/profile_bloc.dart';
 import 'package:my_github_app/home/data_repository/data_repository.dart';
 import 'package:my_github_app/home/view/profile_full.dart';
@@ -33,8 +32,8 @@ class _GitProfilesState extends State<GitProfiles> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                 return fullProfile();
-                }),).then((value) => setState(() {}));
+                 return waitDatabase();
+                }),).then((value) => setState(() {ScaffoldMessenger.of(context).hideCurrentSnackBar();}));
             }
             ),],),
 
@@ -58,6 +57,16 @@ class _GitProfilesState extends State<GitProfiles> {
                       content: Text(state.error),
                     ),
                   );
+                }
+                if (state is  ProfilesLoaded) {
+                  if (state.message != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: Color(0xff779a76),
+                      ),
+                    );
+                  }
                 }
               },
             ),
@@ -106,7 +115,10 @@ class _GitProfilesState extends State<GitProfiles> {
   }
   Widget waitDatabase() {
     return FutureBuilder(builder:(context,projectSnap) {
-      return buildLoadingState();
+      if(projectSnap.connectionState==ConnectionState.done){
+        return fullProfile();
+      }
+      else return buildLoadingState();
     },
         future: getUserFromDataBase(_userRepository));
   }
@@ -123,7 +135,7 @@ class _GitProfilesState extends State<GitProfiles> {
       child: CircularProgressIndicator(),
     );
   }
-  Future getUserFromDataBase (_userRepository) async {
-    user = await _userRepository.getAllUser().then((value) =>value.first.username.toString());
+  Future getUserFromDataBase (UsersRepository userRepository) async {
+    user = await userRepository.getAllUser().then((value) =>value.first.username.toString());
   }
 }

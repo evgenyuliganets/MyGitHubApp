@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:github/github.dart' as git;
 import 'package:meta/meta.dart';
 import 'package:my_github_app/repository/data_repository/data_repository.dart';
 import 'package:my_github_app/repository/models/model.dart';
@@ -16,36 +17,122 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
   Stream<RepositoryState> mapEventToState(
     RepositoryEvent event,
   ) async* {
-    // TODO: implement mapEventToState
-    if (event is GetRepo) {
+
+    if (event is GetRepo) {           //GetSingleRepo or UserRepo or DatabaseRepo
       try {
         yield (RepositoryLoading());
         final repo = await _profileRepo.fetchRepo(event.repoName,event.userName).timeout(Duration(seconds: 2));
         yield (RepositoryLoaded(repo));
-      }  on RepoNotFoundException {
+      }
+
+      on TimeoutException {
+        yield (RepositoryError("No Internet Connection"));
+        try {
+          yield (RepositoryLoading());
+          final repo = await _profileRepo.fetchRepoFromDataBase(event.repoName,event.userName);
+          yield (RepositoryLoaded(repo,message: "Data was loaded from database"));
+        }
+        on RepoNotFoundException{
+            yield (RepositoryError('This Repo was not found in the database!'));}
+
+      }
+
+      on git.UnknownError{
+        yield (RepositoryError("You have reached limit of query's! Wait at least a minute to continue."));
+        try {
+          yield (RepositoryLoading());
+          final repo = await _profileRepo.fetchRepoFromDataBase(event.repoName,event.userName);
+          yield (RepositoryLoaded(repo,message: "Data was loaded from Database"));
+        }
+        on RepoNotFoundException{
+          yield (RepositoryError('This Repo was not found in the database!'));}
+      }
+
+      on RepoNotFoundException {
         yield (RepositoryError('This Repo was Not Found!'));
-      } on TimeoutException {
-        yield (RepositoryError("You have reached limit of query's! Wait at least a minute to continue."));}
+        try {
+          yield (RepositoryLoading());
+          final repo = await _profileRepo.fetchRepoFromDataBase(event.repoName,event.userName);
+          yield (RepositoryLoaded(repo,message: "Data was loaded from database"));
+        }on RepoNotFoundException{
+          yield (RepositoryError('This Repo was not found in the database!'));}
+      }
     }
-    else if (event is GetRepos) {
+
+    else if (event is GetRepos) {           //GetSearchRepos or DatabaseRepos
       try {
         yield (RepositoriesLoading());
-        final repos = await _profileRepo.fetchRepos(event.repoName).timeout(Duration(seconds: 2));
+        final repos = await _profileRepo.fetchRepos(event.repoName).timeout(Duration(seconds: 3));
         yield (RepositoriesLoaded(repos));
-      }on RepoNotFoundException {
-        yield (RepositoriesError('This Repos were Not Found!'));
-      } on TimeoutException {
-        yield (RepositoriesError("You have reached limit of query's! Wait at least a minute to continue."));}
+      }
+
+      on TimeoutException {
+        yield (RepositoriesError("No Internet Connection"));
+        try {
+          yield (RepositoriesLoading());
+          final repos = await _profileRepo.fetchReposFromDataBase();
+          yield (RepositoriesLoaded(repos,message: "All Repos have been loaded from the database"));
+        }
+        on RepoNotFoundException{
+          yield (RepositoriesError('Not a single Repo was found in the database!'));
+        }
+      }
+
+      on git.UnknownError{
+        yield (RepositoriesError("You have reached limit of query's! Wait at least a minute to continue."));
+        try {
+          yield (RepositoriesLoading());
+          final repos = await _profileRepo.fetchReposFromDataBase();
+          yield (RepositoriesLoaded(repos,message: "All Repos have been loaded from the database"));
+        }
+        on RepoNotFoundException{
+          yield (RepositoriesError('Not a single Repo was found in the database!'));}
+      }
+
+      on RepoNotFoundException {
+        yield (RepositoriesError('This Repo was Not Found!'));
+      }
     }
-    else if (event is GetUserRepos) {
+
+
+    else if (event is GetUserRepos) {         //GetUserRepos or DatabaseUserRepos
       try {
         yield (UserRepositoriesLoading());
         final repos = await _profileRepo.fetchUserRepos(event.userName).timeout(Duration(seconds: 2));
         yield (UserRepositoriesLoaded(repos));
-      }on RepoNotFoundException {
+      }
+
+      on TimeoutException {
+        try {
+          yield (UserRepositoriesLoading());
+          final repos = await _profileRepo.fetchUserReposFromDataBase(event.userName);
+          yield (UserRepositoriesLoaded(repos,message: "User Repos have been loaded from the database"));
+        }
+        on RepoNotFoundException{
+          yield (UserRepositoriesError('Not a single User Repo was found in the database!'));
+        }
+      }
+
+      on git.UnknownError{
+        try {
+          yield (UserRepositoriesLoading());
+          final repos = await _profileRepo.fetchUserReposFromDataBase(event.userName);
+          yield (UserRepositoriesLoaded(repos,message: "User Repos have been loaded from the database"));
+        }
+        on RepoNotFoundException{
+          yield (UserRepositoriesError('Not a single Repo was found in the database!'));}
+      }
+
+      on RepoNotFoundException {
         yield (UserRepositoriesError('This User Repos were Not Found!'));
-      } on TimeoutException {
-        yield (UserRepositoriesError("You have reached limit of query's! Wait at least a minute to continue."));}
+        try {
+          yield (UserRepositoriesLoading());
+          final repos = await _profileRepo.fetchUserReposFromDataBase(event.userName);
+          yield (UserRepositoriesLoaded(repos,message: "User Repos have been loaded from the database"));
+        }
+        on RepoNotFoundException{
+          yield (UserRepositoriesError('Not a single Repo was found in the database!'));}
+      }
     }
   }
 }

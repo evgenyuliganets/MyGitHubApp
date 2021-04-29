@@ -12,7 +12,6 @@ import 'package:my_github_app/home/view/text_field.dart';
 
 ListView buildUserData(List<Profile> profile,Function() notifyParent) {
   var profileRepository= ProfilesRepository();
-  GitProfiles gitProfiles= new GitProfiles();
   bool val;
   return ListView.builder(//ListView
     shrinkWrap: true,
@@ -26,7 +25,10 @@ ListView buildUserData(List<Profile> profile,Function() notifyParent) {
                 MaterialPageRoute(builder: (context) => BlocProvider(
                   create: (context) => ProfileBloc(DataRepository()),
                   child:GitProfile(profile[index].login),
-                ),),).then((value) => gitProfiles.createState().refresh());
+                ),),).then((value) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  return notifyParent.call();
+                });
             },
             child: Column(
               children: [
@@ -54,7 +56,9 @@ ListView buildUserData(List<Profile> profile,Function() notifyParent) {
                         ),
                       ),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children:[
+                      if(profile.first.login !=null)
                     SizedBox(height: 5),
+                      if(profile.first.login !=null)
                     Text(
                       profile.first.login,
                       style: TextStyle(
@@ -215,7 +219,10 @@ ListView buildUserData(List<Profile> profile,Function() notifyParent) {
                         MaterialPageRoute(builder: (context) => BlocProvider(
                           create: (context) => ProfileBloc(DataRepository()),
                           child:GitProfile(profile[index].login),
-                        ),),).then((value) => notifyParent.call());},
+                        ),),).then((value) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          return notifyParent.call();
+                        });},
                     ),
                     const SizedBox(width: 8),
                   ],
