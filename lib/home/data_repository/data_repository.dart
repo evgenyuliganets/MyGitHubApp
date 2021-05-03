@@ -18,8 +18,8 @@ class DataRepository {
         value.first.username.toString()), await _userRepository.getAllUser().then((value) =>
         value.first.password.toString())));
         User user =await github.users.getUser(userName);
-      if (user== null) {
-        throw TimeoutException;
+      if (user.login==null) {
+        throw TimeoutException('');
       } else {
         final profile = Profile(
           login: user.login,
@@ -35,8 +35,8 @@ class DataRepository {
       }
     }
     catch (Error) {
-      if (Error is UnknownError)
-        throw UnknownError;
+      if (Error is UnknownError||Error is TimeoutException)
+        throw MyTimeoutException();
       else if (Error is SocketException){
         throw TimeoutException("");
       }
@@ -151,9 +151,9 @@ class DataRepository {
       }
     }
     catch(Error) {
-      if (Error is UnknownError)
-        throw UnknownError;
-      else if (Error is SocketException || Error is TimeoutException){
+      if (Error is UnknownError|| Error is TimeoutException)
+        throw MyTimeoutException();
+      else if (Error is SocketException ){
         throw TimeoutException("");
       }
       else throw UserNotFoundException();
@@ -163,3 +163,4 @@ class DataRepository {
 
 
 class UserNotFoundException implements Exception {}
+class MyTimeoutException implements Exception {}

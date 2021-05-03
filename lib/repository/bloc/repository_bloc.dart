@@ -37,7 +37,7 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
 
       }
 
-      on git.UnknownError{
+      on MyTimeoutException{
         yield (RepositoryError("You have reached limit of query's! Wait at least a minute to continue."));
         try {
           yield (RepositoryLoading());
@@ -67,7 +67,7 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
       }
 
       on TimeoutException {
-        yield (RepositoriesError("No Internet Connection"));
+        yield (RepositoriesError("You have reached limit of query's! Wait at least a minute to continue."));
         try {
           yield (RepositoriesLoading());
           final repos = await _profileRepo.fetchReposFromDataBase();
@@ -78,8 +78,8 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
         }
       }
 
-      on git.UnknownError{
-        yield (RepositoriesError("You have reached limit of query's! Wait at least a minute to continue."));
+      on MyTimeoutException{
+        yield (RepositoriesError("No Internet Connection"));
         try {
           yield (RepositoriesLoading());
           final repos = await _profileRepo.fetchReposFromDataBase();
@@ -113,7 +113,7 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
         }
       }
 
-      on git.UnknownError{
+      on MyTimeoutException{
         try {
           yield (UserRepositoriesLoading());
           final repos = await _profileRepo.fetchUserReposFromDataBase(event.userName);

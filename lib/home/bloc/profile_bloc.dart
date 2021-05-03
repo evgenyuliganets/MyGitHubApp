@@ -38,7 +38,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           }
         }
 
-        on git.UnknownError{
+        on MyTimeoutException{
           yield (ProfileError("You have reached limit of query's! Wait at least a minute to continue."));
           try {
             yield (ProfileLoading());
@@ -70,7 +70,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         }
 
         on TimeoutException {
-          yield (ProfilesError("No Internet Connection"));
+          yield (ProfilesError("You have reached limit of query's! Wait at least a minute to continue."));
           try {
             yield (ProfilesLoading());
             final profile = await _profileRepo.fetchUsersFromDataBase(event.userName);
@@ -83,8 +83,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           }
         }
 
-        on git.UnknownError{
-          yield (ProfilesError("You have reached limit of query's! Wait at least a minute to continue."));
+        on MyTimeoutException{
+          yield (ProfilesError("No Internet Connection"));
           try {
             yield (ProfilesLoading());
             final profile = await _profileRepo.fetchUsersFromDataBase(event.userName);

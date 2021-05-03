@@ -20,8 +20,8 @@ class RepoDataRepository {
               value.first.password.toString())));
         Repository repository = await github.repositories.getRepository(
             RepositorySlug(owner, name));
-      if (repository == null) {
-        throw RepoNotFoundException();
+      if (repository.owner == null) {
+        throw TimeoutException("");
       } else {
         final repo = my.Repository(
           name: repository.name,
@@ -37,8 +37,8 @@ class RepoDataRepository {
       }
     }
     catch (Error) {
-      if (Error is UnknownError)
-        throw UnknownError;
+      if (Error is UnknownError|| Error is TimeoutException)
+        throw MyTimeoutException();
       else if (Error is SocketException){
         throw TimeoutException("");
       }
@@ -82,7 +82,7 @@ class RepoDataRepository {
             .listUserRepositories(
             userName, page: 1, direction: "desc").toList();
       if (userRepos.isEmpty) {
-        throw RepoNotFoundException();
+        throw TimeoutException("");
       } else {
         if (userRepos.length > 7) {
           List<Repository> lists = new List<Repository>(7);
@@ -113,8 +113,8 @@ class RepoDataRepository {
       }
     }
     catch (Error) {
-      if (Error is UnknownError)
-        throw UnknownError;
+      if (Error is UnknownError|| Error is TimeoutException)
+        throw MyTimeoutException();
       else if (Error is SocketException){
         throw TimeoutException("");
       }
@@ -159,9 +159,9 @@ class RepoDataRepository {
       }
     }
     catch (Error) {
-      if (Error is UnknownError)
-        throw UnknownError;
-      else if (Error is SocketException || Error is TimeoutException){
+      if (Error is UnknownError|| Error is TimeoutException)
+        throw MyTimeoutException();
+      else if (Error is SocketException){
         throw TimeoutException("");
       }
       else throw RepoNotFoundException();
@@ -258,4 +258,7 @@ class RepoDataRepository {
     }
   }
 }
+
+class MyTimeoutException implements Exception{}
+
 class RepoNotFoundException implements Exception {}
